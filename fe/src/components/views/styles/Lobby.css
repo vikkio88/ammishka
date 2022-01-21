@@ -1,0 +1,18 @@
+div.Lobby-wrapper {
+    margin: auto;
+    border: 2px black solid;
+    border-radius: 4px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+    height: 250px;
+}
+
+div.Lobby-subWrapper {
+    width: 100%;
+}
+
+div.Lobby-wrapper button {
+    margin-top: 1.5em;
+}

@@ -1,0 +1,96 @@
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+    overflow-x: hidden;
+}
+
+main {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 16px;
+}
+
+main.centered {
+    justify-content: center;
+}
+
+
+/**
+/* Components
+**/
+
+/* Buttons */
+button {
+    background-color: transparent;
+    border: 2px #4c53af solid;
+    color: #4c53af;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #4c53af;
+    border: 2px #000 solid;
+    color: white;
+}
+
+button.accent {
+    border: 2px #af4c4c solid;
+    color: #af4c4c;
+}
+
+button.accent:hover {
+    background-color: #af4c4c;
+    border: 2px #000 solid;
+    color: white;
+}
+
+
+button.primary {
+    border: 2px #4CAF50 solid;
+    color: #4CAF50;
+}
+
+button.primary:hover {
+    background-color: #4CAF50;
+    border: 2px #000 solid;
+    color: white;
+}
+
+button:active {
+    box-shadow: 0 2px #666;
+    transform: translateY(2px);
+}
+
+button.small {
+    padding: 5px 10px;
+    text-align: center;
+    font-size: 12px;
+}
+
+/* Input */
+input[type=text] {
+    padding: 10px 20px;
+    background-color: transparent;
+    border: 2px #4c53af solid;
+    color: #4c53af;
+    font-size: 16px;
+}
+
+/* Select */
+select {
+    padding: 10px 20px;
+    background-color: transparent;
+    border: 2px #4c53af solid;
+    color: #4c53af;
+    font-size: 16px;
+}

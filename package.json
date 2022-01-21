@@ -1,0 +1,17 @@
+{
+  "name": "ammishka",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev:be": "cd be && npm run dev",
+    "dev:fe": "cd fe && npm run dev",
+    "dev": "concurrently --kill-others \"npm:dev:be\" \"npm:dev:fe\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^7.0.0"
+  }
+}
