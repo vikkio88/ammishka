@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
+    "test": "jest src/__tests__",
+    "test:watch": "jest --watch src/__tests__",
     "dev": "nodemon src/index.js",
     "start": "node src/index.js"
   },
@@ -16,6 +18,7 @@
     "ulid": "^2.3.0"
   },
   "devDependencies": {
+    "jest": "^27.4.7",
     "nodemon": "^2.0.15"
   }
 }
