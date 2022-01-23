@@ -1,8 +1,9 @@
+import { EVENTS } from 'ammishka-shared/fe';
 import socket from '../../libs/socket';
 import a from '../actions';
 
 const events = {
-  'message': msg => console.log('message', msg)
+  [EVENTS.MESSAGE]: msg => console.log('message', msg)
 };
 
 let client = null;
@@ -25,6 +26,8 @@ const app = store => {
   store.on(a.APP.CREATE, async () => {
     store.dispatch(a.APP.LOADING_START);
     client = await socket.init(events);
+
+    await socket.createRoom();
     store.dispatch(a.APP.LOADING_STOP, { id: client.id, isConnected: true });
   });
 
