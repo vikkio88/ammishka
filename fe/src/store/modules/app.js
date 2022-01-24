@@ -20,6 +20,10 @@ const events = store => ({
         return;
       }
 
+      default: {
+        console.error('unknown message', msg);
+      }
+
     }
   }
 });
