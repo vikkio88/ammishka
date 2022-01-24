@@ -13,6 +13,17 @@ const game = store => {
     store.on(a.GAME.ACTION, () => {
         socket.action();
     });
+
+    store.on(a.GAME.ACTIONS.ROOM_CREATED, ({ game }, payload) => {
+        const { room } = payload;
+        console.log('on store game', payload);
+        return {
+            game: {
+                ...game,
+                room
+            }
+        };
+    });
 };
 
 export default game;

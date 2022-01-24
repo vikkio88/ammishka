@@ -1,6 +1,5 @@
 require('dotenv').config();
 const { createServer } = require('http');
-const { ulid } = require('ulid');
 const { Server } = require('socket.io');
 const httpServer = createServer();
 
@@ -32,12 +31,16 @@ io.on(e.CONNECTION, socket => {
         console.log('users#: ', users.size);
     });
 
-    socket.on('action', ({ type, payload = {} } = {}) => {
+    socket.on(e.ACTION, ({ type, payload = {} } = {}) => {
         switch (type) {
             case GAME_ACTIONS.CREATE_ROOM: {
-                const payload = roomManager.make(socket);
-                console.log(`room created ${payload.roomId}`);
-                socket.emit(e.MESSAGE, { type: GAME_ACTIONS.CREATED_ROOM, payload });
+                const result = roomManager.make(socket);
+                console.log(`room created ${result.payload.roomId}`);
+                socket.emit(e.MESSAGE, result);
+                
+                // @TODO: Improve this using
+                // joining room on socketio
+                socket.join(result.payload.roomId);
                 return;
             }
             case GAME_ACTIONS.JOIN_ROOM: {

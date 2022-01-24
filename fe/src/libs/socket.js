@@ -1,5 +1,5 @@
 import { io } from "socket.io-client";
-import { EVENTS } from 'ammishka-shared/fe';
+import { EVENTS, GAME_ACTIONS } from 'ammishka-shared/fe';
 const { REACT_APP_BACKEND_URL } = process.env;
 let client = null;
 
@@ -49,7 +49,7 @@ const socket = {
     },
     async createRoom() {
         const client = await this.getClient();
-        client.emit(EVENTS.ACTION, { type: 'remote:create_room' });
+        client.emit(EVENTS.ACTION, { type: GAME_ACTIONS.CREATE_ROOM });
     },
     async joinRoom() { return timeoutPromise(); },
     async leaveRoom() { return timeoutPromise(); },
