@@ -51,7 +51,10 @@ const socket = {
         const client = await this.getClient();
         client.emit(EVENTS.ACTION, { type: GAME_ACTIONS.CREATE_ROOM });
     },
-    async joinRoom() { return timeoutPromise(); },
+    async joinRoom(roomId) {
+        const client = await this.getClient();
+        client.emit(EVENTS.ACTION, { type: GAME_ACTIONS.JOIN_ROOM, payload: { roomId } });
+    },
     async leaveRoom() { return timeoutPromise(); },
     async action() {
         const client = await this.getClient();

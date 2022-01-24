@@ -80,7 +80,11 @@ class Room {
 
         this.users.set(user.id, user);
 
-        return a_r(true, { type: GAME_ACTIONS.JOINED_ROOM, userId: user.id, room: this.toJson() });
+        return a_r(true, {
+            type: GAME_ACTIONS.JOINED_ROOM,
+            userId: user.id,
+            room: this.toJson()
+        });
     }
 
 

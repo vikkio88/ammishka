@@ -4,6 +4,7 @@ import a from '../actions';
 const INITIAL_APP_STATE = {
     game: {
         room: null,
+        admin: false
     },
 };
 
@@ -16,7 +17,22 @@ const game = store => {
 
     store.on(a.GAME.ACTIONS.ROOM_CREATED, ({ game }, payload) => {
         const { room } = payload;
-        console.log('on store game', payload);
+        return {
+            game: {
+                ...game,
+                admin: true,
+                room
+            }
+        };
+    });
+
+    store.on(a.GAME.ACTIONS.ROOM_JOINED, ({ app, game }, payload) => {
+        const { room } = payload;
+
+        if (app.id === payload.userId){
+            // I am the one who joined
+        }
+        
         return {
             game: {
                 ...game,

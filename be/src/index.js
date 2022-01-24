@@ -45,7 +45,12 @@ io.on(e.CONNECTION, socket => {
             }
             case GAME_ACTIONS.JOIN_ROOM: {
                 const { roomId } = payload;
-                const payload = roomManager.join(roomId, socket);
+                const result = roomManager.join(roomId, socket);
+                console.log(`room joined`, result);
+                socket.join(roomId);
+                io.to(roomId).emit(e.MESSAGE, result);
+
+                // broadcast to room
                 return;
             }
             default: {

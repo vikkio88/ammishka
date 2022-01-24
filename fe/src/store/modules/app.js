@@ -12,13 +12,17 @@ const events = store => ({
       case GAME_ACTIONS.CREATED_ROOM: {
         store.dispatch(a.GAME.ACTIONS.ROOM_CREATED, payload);
         store.dispatch(a.APP.LOADING_STOP);
+        return;
+      }
+      case GAME_ACTIONS.JOINED_ROOM: {
+        store.dispatch(a.GAME.ACTIONS.ROOM_JOINED, payload);
+        store.dispatch(a.APP.LOADING_STOP);
+        return;
       }
 
     }
   }
 });
-
-let client = null;
 
 const INITIAL_APP_STATE = {
   app: {
@@ -39,19 +43,20 @@ const app = store => {
 
   store.on(a.APP.CREATE, async () => {
     store.dispatch(a.APP.LOADING_START);
-    client = await socket.init(events(store));
-
+    await socket.init(events(store));
     await socket.createRoom();
     // here we are not loadingStop as waiting for the room to be created
-    store.dispatch(a.APP.MERGE_STATE, { id: client.id, isConnected: true });
+    store.dispatch(a.APP.MERGE_STATE, { id: socket.id, isConnected: true });
   });
 
 
-  store.on(a.APP.JOIN, async ({ app }) => {
-    console.log('join action');
+  store.on(a.APP.JOIN, async ({ app }, { roomId }) => {
     store.dispatch(a.APP.LOADING_START);
-    await socket.join();
-    store.dispatch(a.APP.LOADING_STOP);
+    await socket.init(events(store));
+    await socket.joinRoom(roomId);
+    store.dispatch(a.APP.MERGE_STATE, { id: socket.id, isConnected: true });
+
+    // maybe this and App.Create could be one to init
   });
 
 };

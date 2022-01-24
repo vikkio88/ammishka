@@ -36,7 +36,14 @@ const GameCreation = () => {
 };
 
 const GameJoining = () => {
-    return <>Game Joining</>;
+    const { dispatch } = useStoreon();
+    const [roomId, setRoomId] = useState('');
+    return (
+        <div className='Lobby-subWrapper'>
+            <input type="text" value={roomId} placeholder='Insert Room Id' onChange={e => setRoomId(e.target.value)} />
+            <button onClick={() => dispatch(a.APP.JOIN, { roomId })} disabled={!Boolean(roomId)}>Join</button>
+        </div>
+    );
 };
 
 const Lobby = () => {

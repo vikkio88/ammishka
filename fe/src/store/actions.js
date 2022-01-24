@@ -16,6 +16,7 @@ const ACTIONS = {
         ACTION: 'game:action',
         ACTIONS: {
             ROOM_CREATED: 'game:room:created',
+            ROOM_JOINED: 'game:room:joined',
         },
 
     },
