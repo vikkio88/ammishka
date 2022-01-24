@@ -35,6 +35,20 @@ describe('RoomsManager specs', () => {
         expect(rm.roomAdmins.size).toBe(1);
 
         expect(rm.roomAdmins.has(ADMIN_ID)).toBe(true);
+    });
 
+    it('make room will create one', () => {
+        const fakeRoomIdGenerator = () => ROOM_ID;
+        const rm = new RoomsManager(fakeRoomIdGenerator);
+
+        const result = rm.make(userSocketMock(ADMIN_ID));
+
+        expect(result).toEqual({ roomId: ROOM_ID });
+        expect(rm.rooms.size).toBe(1);
+        expect(rm.roomAdmins.size).toBe(1);
+
+        expect(rm.rooms.has(ROOM_ID)).toBe(true);
+        expect(rm.roomAdmins.has(ADMIN_ID)).toBe(true);
+        expect(rm.roomAdmins.get(ADMIN_ID)).toBe(ROOM_ID);
     });
 });
