@@ -7,7 +7,7 @@ const { REMOTE_HOST, LOCAL_PORT } = process.env;
 
 const { GAME_ACTIONS } = require('ammishka-shared/actions');
 const { EVENTS: e } = require('ammishka-shared/events');
-const { RoomsManager } = require('./libs/Room');
+const RoomsManager = require('./libs/RoomsManager');
 
 const users = new Map();
 const roomManager = new RoomsManager();
@@ -37,7 +37,7 @@ io.on(e.CONNECTION, socket => {
                 const result = roomManager.make(socket);
                 console.log(`room created ${result.payload.roomId}`);
                 socket.emit(e.MESSAGE, result);
-                
+
                 // @TODO: Improve this using
                 // joining room on socketio
                 socket.join(result.payload.roomId);
@@ -48,10 +48,12 @@ io.on(e.CONNECTION, socket => {
                 const result = roomManager.join(roomId, socket);
                 console.log(`room joined`, result);
                 socket.join(roomId);
+                // broadcasting to Room
                 io.to(roomId).emit(e.MESSAGE, result);
-
-                // broadcast to room
                 return;
+            }
+
+            case GAME_ACTIONS.ROOM_ACTION: {
             }
             default: {
                 console.log(`${id}: `, { type, payload });

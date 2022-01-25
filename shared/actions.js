@@ -7,6 +7,8 @@ const GAME_ACTIONS = {
     
     LEAVE_ROOM: 'client:leave_room',
     LEFT_ROOM: 'client:left_room',
+
+    ROOM_ACTION: 'client:room_action',
 };
 
 module.exports = {
