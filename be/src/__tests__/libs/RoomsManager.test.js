@@ -1,5 +1,5 @@
-const Room = require("../../libs/Room");
-const RoomsManager = require("../../libs/RoomsManager");
+const Room = require('../../libs/Room');
+const RoomsManager = require('../../libs/RoomsManager');
 
 const ROOM_ID = 'someRoomId';
 const ADMIN_ID = 'someAdminId';

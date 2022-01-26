@@ -28,11 +28,28 @@ const game = store => {
 
     store.on(a.GAME.ACTIONS.ROOM_JOINED, ({ app, game }, payload) => {
         const { room } = payload;
-
-        if (app.id === payload.userId){
+        if (app.id === payload.userId) {
             // I am the one who joined
         }
-        
+
+        return {
+            game: {
+                ...game,
+                room
+            }
+        };
+    });
+
+
+    store.on(a.GAME.ACTIONS.ROOM_LEFT, ({ app, game }, payload) => {
+        const { room } = payload;
+
+        if (app.id === payload.userId) {
+            return {
+                ...INITIAL_APP_STATE
+            };
+        }
+
         return {
             game: {
                 ...game,

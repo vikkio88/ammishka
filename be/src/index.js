@@ -5,7 +5,7 @@ const httpServer = createServer();
 
 const { REMOTE_HOST, LOCAL_PORT } = process.env;
 
-const { GAME_ACTIONS } = require('ammishka-shared/actions');
+const { ROOM_ACTIONS } = require('ammishka-shared/actions');
 const { EVENTS: e } = require('ammishka-shared/events');
 const RoomsManager = require('./libs/RoomsManager');
 
@@ -33,7 +33,7 @@ io.on(e.CONNECTION, socket => {
 
     socket.on(e.ACTION, ({ type, payload = {} } = {}) => {
         switch (type) {
-            case GAME_ACTIONS.CREATE_ROOM: {
+            case ROOM_ACTIONS.CREATE_ROOM: {
                 const result = roomManager.make(socket);
                 console.log(`room created ${result.payload.roomId}`);
                 socket.emit(e.MESSAGE, result);
@@ -43,7 +43,7 @@ io.on(e.CONNECTION, socket => {
                 socket.join(result.payload.roomId);
                 return;
             }
-            case GAME_ACTIONS.JOIN_ROOM: {
+            case ROOM_ACTIONS.JOIN_ROOM: {
                 const { roomId } = payload;
                 const result = roomManager.join(roomId, socket);
                 console.log(`room joined`, result);
@@ -52,8 +52,19 @@ io.on(e.CONNECTION, socket => {
                 io.to(roomId).emit(e.MESSAGE, result);
                 return;
             }
+            case ROOM_ACTIONS.LEAVE_ROOM: {
+                const { roomId } = payload;
+                const result = roomManager.leave(roomId, socket);
+                console.log(`room left`, result);
+                socket.leave(roomId);
+                // telling user he left
+                socket.emit(e.MESSAGE, result);
+                // broadcasting to Room
+                io.to(roomId).emit(e.MESSAGE, result);
+                return;
+            }
 
-            case GAME_ACTIONS.ROOM_ACTION: {
+            case ROOM_ACTIONS.ROOM_ACTION: {
             }
             default: {
                 console.log(`${id}: `, { type, payload });

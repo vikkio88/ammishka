@@ -1,4 +1,4 @@
-const Room = require("../../libs/Room");
+const Room = require('../../libs/Room');
 
 const ROOM_ID = 'someRoomId';
 const ADMIN_ID = 'someAdminId';

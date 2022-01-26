@@ -1,4 +1,4 @@
-const { GAME_ACTIONS } = require('ammishka-shared/actions');
+const { ROOM_ACTIONS } = require('ammishka-shared/actions');
 const { ERRORS } = require('ammishka-shared/errors');
 const { actionResult: a_r } = require('ammishka-shared/payloads');
 const { ulid } = require('ulid');
@@ -19,7 +19,7 @@ class RoomsManager {
         const room = new Room(id, admin, options);
         this.add(room);
         return a_r(true, {
-            type: GAME_ACTIONS.CREATED_ROOM,
+            type: ROOM_ACTIONS.CREATED_ROOM,
             roomId: id,
             room: room.toJson()
         });

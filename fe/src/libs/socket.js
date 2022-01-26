@@ -1,14 +1,7 @@
 import { io } from "socket.io-client";
-import { EVENTS, GAME_ACTIONS } from 'ammishka-shared/fe';
+import { EVENTS, ROOM_ACTIONS } from 'ammishka-shared/fe';
 const { REACT_APP_BACKEND_URL } = process.env;
 let client = null;
-
-const timeoutPromise = (timeout = 3000) => new Promise((resolve) =>
-    setTimeout(() => {
-        console.log('mock timeout resolved');
-        resolve();
-    }, timeout)
-);
 
 const registerEventHandler = (client, events = {}) => {
     for (const event of Object.keys(events)) {
@@ -37,9 +30,11 @@ const socket = {
             }
         });
     },
+
     isReady() {
         return Boolean(this.id);
     },
+
     async getClient() {
         if (client) return client;
 
@@ -49,18 +44,29 @@ const socket = {
     },
     async createRoom() {
         const client = await this.getClient();
-        client.emit(EVENTS.ACTION, { type: GAME_ACTIONS.CREATE_ROOM });
+        client.emit(EVENTS.ACTION, { type: ROOM_ACTIONS.CREATE_ROOM });
     },
     async joinRoom(roomId) {
         const client = await this.getClient();
-        client.emit(EVENTS.ACTION, { type: GAME_ACTIONS.JOIN_ROOM, payload: { roomId } });
+        client.emit(EVENTS.ACTION, { type: ROOM_ACTIONS.JOIN_ROOM, payload: { roomId } });
     },
-    async leaveRoom() { return timeoutPromise(); },
+    async leaveRoom(roomId) {
+        const client = await this.getClient();
+        client.emit(EVENTS.ACTION, { type: ROOM_ACTIONS.LEAVE_ROOM, payload: { roomId } });
+    },
     async action() {
         const client = await this.getClient();
         client.emit(EVENTS.ACTION, {
             type: 'test', stuff: 1
         });
+    },
+
+
+    async disconnect() {
+        const clientInstance = await this.getClient();
+        clientInstance.disconnect();
+        client = null;
+        this.id = null;
     },
 };
 

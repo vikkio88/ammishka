@@ -1,4 +1,4 @@
-const { GAME_ACTIONS } = require('ammishka-shared/actions');
+const { ROOM_ACTIONS } = require('ammishka-shared/actions');
 const { ERRORS } = require('ammishka-shared/errors');
 const { actionResult: a_r } = require('ammishka-shared/payloads');
 
@@ -50,7 +50,7 @@ class Room {
         this.users.set(user.id, user);
 
         return a_r(true, {
-            type: GAME_ACTIONS.JOINED_ROOM,
+            type: ROOM_ACTIONS.JOINED_ROOM,
             userId: user.id,
             room: this.toJson()
         });
@@ -64,7 +64,7 @@ class Room {
 
         this.users.delete(user.id);
 
-        return a_r(true, { type: GAME_ACTIONS.LEFT_ROOM, userId: user.id });
+        return a_r(true, { type: ROOM_ACTIONS.LEFT_ROOM, userId: user.id, room: this.toJson() });
     }
 
     toJson() {
