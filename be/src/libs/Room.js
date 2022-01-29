@@ -91,7 +91,8 @@ class Room {
             id: this.id,
             adminId: this.adminId,
             isReady: this.isReady(),
-            users: Array.from(this.users).map(e => e[0])
+            users: Array.from(this.users).map(e => e[0]),
+            game: this.game ? this.game.toJson() : null
         };
     }
 }

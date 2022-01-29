@@ -16,14 +16,15 @@ describe('Room specs', () => {
         expect(room.adminId).toEqual(ADMIN_ID);
     });
 
-    it('parses to json correctly', () => {
+    it('parses to json correctly for Gameless room', () => {
         const room = getMockedRoom();
 
         expect(room.toJson()).toEqual({
             id: ROOM_ID,
             isReady: false,
             adminId: ADMIN_ID,
-            users: [ADMIN_ID]
+            users: [ADMIN_ID],
+            game: null
         });
     });
 
