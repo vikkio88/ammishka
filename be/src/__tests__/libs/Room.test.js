@@ -74,7 +74,16 @@ describe('Room specs', () => {
         const res = room.leave(notAdmin);
         expect(res).toEqual({
             success: true,
-            payload: { type: expect.stringContaining('left'), userId: OTHER_ID }
+            payload: {
+                type: expect.stringContaining('left'),
+                userId: OTHER_ID,
+                room: expect.objectContaining({
+                    adminId: ADMIN_ID,
+                    id: ROOM_ID,
+                    isReady: false,
+                    users: [ADMIN_ID]
+                })
+            }
         });
 
         expect(room.users.has(OTHER_ID)).toBe(false);

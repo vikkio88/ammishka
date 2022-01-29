@@ -95,7 +95,18 @@ describe('RoomsManager specs', () => {
         rm.join(ROOM_ID, other);
         const result = rm.leave(ROOM_ID, other);
 
-        expect(result).toEqual({ success: true, payload: { type: expect.stringContaining('left'), userId: OTHER_ID } });
+        expect(result).toEqual({
+            success: true, payload: {
+                type: expect.stringContaining('left'),
+                userId: OTHER_ID,
+                room: expect.objectContaining({
+                    adminId: ADMIN_ID,
+                    id: ROOM_ID,
+                    isReady: false,
+                    users: [ADMIN_ID]
+                })
+            }
+        });
     });
 
     it('does not leave a room if the room does not exist', () => {
