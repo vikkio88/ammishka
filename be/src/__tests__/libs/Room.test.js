@@ -88,6 +88,14 @@ describe('Room specs', () => {
 
         expect(room.users.has(OTHER_ID)).toBe(false);
     });
+
+    it('reports correctly if the room is empty', () => {
+        const room = getMockedRoom();
+        expect(room.isEmpty()).toBe(false);
+        room.leave(userSocketMock(ADMIN_ID));
+        expect(room.isEmpty()).toBe(true);
+    });
+
     it('reports error if you cannot leave the room', () => { });
 
     // might need to broadcast the room left message somewhere else

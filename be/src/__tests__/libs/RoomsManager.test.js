@@ -121,4 +121,23 @@ describe('RoomsManager specs', () => {
         const result = rm.leave('another room', other);
         expect(result).toEqual({ success: false, payload: { reason: expect.stringContaining('not_found') } });
     });
+
+    it('removes the room if the last user leaves the room empty', () => {
+        const fakeRoomIdGenerator = () => ROOM_ID;
+        const rm = new RoomsManager(fakeRoomIdGenerator);
+
+        rm.make(userSocketMock(ADMIN_ID));
+        const OTHER_ID = 'other_user';
+        const other = userSocketMock(OTHER_ID);
+
+        rm.join(ROOM_ID, other);
+        let result = rm.leave(ROOM_ID, other);
+        expect(result.success).toBe(true);
+
+        expect(rm.rooms.has(ROOM_ID)).toBe(true);
+
+        result = rm.leave(ROOM_ID, userSocketMock(ADMIN_ID));
+        expect(result.success).toBe(true);
+        expect(rm.rooms.has(ROOM_ID)).toBe(false);
+    });
 });

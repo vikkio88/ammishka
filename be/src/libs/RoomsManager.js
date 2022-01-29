@@ -4,6 +4,7 @@ const { actionResult: a_r } = require('ammishka-shared/payloads');
 const { ulid } = require('ulid');
 
 const Room = require('./Room');
+const User = require('./User');
 
 class RoomsManager {
     constructor(idGenerator = ulid) {
@@ -14,9 +15,17 @@ class RoomsManager {
         this.roomAdmins = new Map();
     }
 
-    make(admin, options = {}) {
+    make(
+        admin,
+        options = {}
+    ) {
         const id = this.idGenerator();
-        const room = new Room(id, admin, options);
+        const room = new Room(
+            id,
+            //TODO: maybe here I can flag if is admin
+            User.make(admin),
+            options
+        );
         this.add(room);
         return a_r(true, {
             type: ROOM_ACTIONS.CREATED_ROOM,
@@ -25,7 +34,10 @@ class RoomsManager {
         });
     }
 
-    add(room) {
+    add(
+        /** @type Room */
+        room
+    ) {
         this.rooms.set(room.id, room);
         this.roomAdmins.set(room.adminId, room.id);
     }
@@ -41,7 +53,7 @@ class RoomsManager {
         const room = this.rooms.get(roomId);
 
 
-        return room.join(user);
+        return room.join(User.make(user));
     }
 
     leave(roomId, user) {
@@ -53,8 +65,13 @@ class RoomsManager {
         const room = this.rooms.get(roomId);
 
 
-        return room.leave(user);
+        const result = room.leave(User.make(user));
+        // here we might also check whether was the admin to leave
+        if (result.success && room.isEmpty()) {
+            this.rooms.delete(roomId);
+        }
 
+        return result;
     }
 }
 
