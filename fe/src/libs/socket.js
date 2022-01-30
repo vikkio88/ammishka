@@ -10,6 +10,8 @@ const registerEventHandler = (client, events = {}) => {
     }
 };
 
+const mA = (type, payload) => ({ type, payload });
+
 const socket = {
     id: null,
     async init(events = {}) {
@@ -42,22 +44,24 @@ const socket = {
 
         return client;
     },
-    async createRoom() {
+    async emitAction(type, payload = {}) {
         const client = await this.getClient();
-        client.emit(EVENTS.ACTION, { type: ROOM_ACTIONS.CREATE_ROOM });
+        const actionBody = mA(type, payload);
+        client.emit(EVENTS.ACTION, actionBody);
     },
-    async joinRoom(roomId) {
-        const client = await this.getClient();
-        client.emit(EVENTS.ACTION, { type: ROOM_ACTIONS.JOIN_ROOM, payload: { roomId } });
+    async createRoom(payload = {}) {
+        this.emitAction(ROOM_ACTIONS.CREATE_ROOM, payload);
+    },
+    async joinRoom(roomId, payload = {}) {
+        this.emitAction(ROOM_ACTIONS.JOIN_ROOM, { ...payload, roomId });
     },
     async leaveRoom(roomId) {
-        const client = await this.getClient();
-        client.emit(EVENTS.ACTION, { type: ROOM_ACTIONS.LEAVE_ROOM, payload: { roomId } });
+        this.emitAction(ROOM_ACTIONS.LEAVE_ROOM, { roomId });
     },
-    async action() {
+    async action(payload = {}) {
         const client = await this.getClient();
         client.emit(EVENTS.ACTION, {
-            type: 'test', stuff: 1
+            type: 'test', payload
         });
     },
 
