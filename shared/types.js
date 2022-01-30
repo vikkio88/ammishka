@@ -5,6 +5,12 @@ const USER_TYPES = {
 };
 
 
+// maybe this goes with game actually
+const GAME_ROLES = {
+
+};
+
+
 module.exports = {
     USER_TYPES
 };
