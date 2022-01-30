@@ -103,7 +103,13 @@ describe('RoomsManager specs', () => {
                     adminId: ADMIN_ID,
                     id: ROOM_ID,
                     isReady: false,
-                    users: [ADMIN_ID]
+                    users: expect.arrayContaining([
+                        expect.objectContaining({
+                            id: ADMIN_ID,
+                            name: expect.any(String),
+                            type: expect.any(String)
+                        })
+                    ]),
                 })
             }
         });

@@ -1,13 +1,14 @@
 const { ROOM_ACTIONS } = require('ammishka-shared/actions');
 const { ERRORS } = require('ammishka-shared/errors');
+const { generator } = require('ammishka-shared/libs/ammuzzu');
 const { actionResult: a_r } = require('ammishka-shared/payloads');
-const { ulid } = require('ulid');
+
 
 const Room = require('./Room');
 const User = require('./User');
 
 class RoomsManager {
-    constructor(idGenerator = ulid) {
+    constructor(idGenerator = generator.colourMoodRoom) {
         this.idGenerator = idGenerator;
         /** @type Map<String, Room> */
         this.rooms = new Map();

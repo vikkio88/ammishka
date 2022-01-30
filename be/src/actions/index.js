@@ -2,6 +2,8 @@
 const { ROOM_ACTIONS } = require('ammishka-shared/actions');
 const { EVENTS: e } = require('ammishka-shared/events');
 
+const RoomsManager = require('../libs/RoomsManager');
+
 // use env.LOG_LEVEL
 const defaultLogger = (...args) => console.log(args);
 

@@ -1,9 +1,10 @@
 const Room = require('../../libs/Room');
+const User = require('../../libs/User');
 
 const ROOM_ID = 'someRoomId';
 const ADMIN_ID = 'someAdminId';
 
-const userSocketMock = (id) => ({ id });
+const userSocketMock = (id) => new User(id);
 const getMockedRoom = ({ options = {} } = {}) => {
     const user = userSocketMock(ADMIN_ID);
     return new Room(ROOM_ID, user, options);
@@ -23,7 +24,13 @@ describe('Room specs', () => {
             id: ROOM_ID,
             isReady: false,
             adminId: ADMIN_ID,
-            users: [ADMIN_ID],
+            users: expect.arrayContaining([
+                expect.objectContaining({
+                    id: ADMIN_ID,
+                    name: expect.any(String),
+                    type: expect.any(String)
+                })
+            ]),
             game: null
         });
     });
@@ -50,7 +57,14 @@ describe('Room specs', () => {
                 userId: OTHER_ID
             }
         });
-        expect(res.payload.room.users).toEqual(expect.arrayContaining([OTHER_ID]));
+        expect(res.payload.room.users).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    id: ADMIN_ID,
+                    name: expect.any(String),
+                    type: expect.any(String)
+                })
+            ]));
     });
 
     it('does not join if max users reached', () => {
@@ -82,7 +96,13 @@ describe('Room specs', () => {
                     adminId: ADMIN_ID,
                     id: ROOM_ID,
                     isReady: false,
-                    users: [ADMIN_ID]
+                    users: expect.arrayContaining([
+                        expect.objectContaining({
+                            id: ADMIN_ID,
+                            name: expect.any(String),
+                            type: expect.any(String)
+                        })
+                    ]),
                 })
             }
         });
