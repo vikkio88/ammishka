@@ -1,10 +1,18 @@
+
 const { ROOM_ACTIONS } = require('ammishka-shared/actions');
 const { EVENTS: e } = require('ammishka-shared/events');
 
 // use env.LOG_LEVEL
-const defaultLogger = message => console.log(message);
+const defaultLogger = (...args) => console.log(args);
 
-const makeActionHandler = (socket, io, roomManager, logger = defaultLogger) => {
+const makeActionHandler = (
+    socket,
+    /** @type Server */
+    io,
+    /** @type RoomsManager */
+    roomManager,
+    logger = defaultLogger) => {
+    const id = socket.id;
 
     return ({ type, payload = {} } = {}) => {
         switch (type) {
@@ -30,7 +38,7 @@ const makeActionHandler = (socket, io, roomManager, logger = defaultLogger) => {
                 const result = roomManager.leave(roomId, socket);
                 logger(`room left`, result);
                 socket.leave(roomId);
-                
+
                 // telling user he left
                 socket.emit(e.MESSAGE, result);
                 // broadcasting to Room user left
@@ -40,9 +48,15 @@ const makeActionHandler = (socket, io, roomManager, logger = defaultLogger) => {
 
             case ROOM_ACTIONS.ROOM_ACTION: {
             }
+
+            case ROOM_ACTIONS.TEST: {
+                logger(`${id} - test ping: `, { type, payload });
+                socket.emit(e.MESSAGE, { received: true, payload: { type: type, payload } });
+                return;
+            }
             default: {
-                logger(`${id}: `, { type, payload });
-                socket.emit(e.MESSAGE, { received: true, type: type });
+                // this should be error
+                logger(`${id} sent invalid message: `, { type, payload });
                 return;
             }
 

@@ -10,6 +10,9 @@ const EVENTS = {
     ACTION: 'action',
     // Server -> Client
     MESSAGE: 'server:message',
+
+    // Server -> All (maybe)
+    NOTIFICATION: 'server:notification'
 };
 
 module.exports = {

@@ -10,6 +10,9 @@ const ROOM_ACTIONS = {
 
     ROOM_ACTION: 'client:room_action',
 
+
+    // this is for test purposes, duh!
+    TEST: 'test'
 };
 
 module.exports = {

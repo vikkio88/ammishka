@@ -58,11 +58,8 @@ const socket = {
     async leaveRoom(roomId) {
         this.emitAction(ROOM_ACTIONS.LEAVE_ROOM, { roomId });
     },
-    async action(payload = {}) {
-        const client = await this.getClient();
-        client.emit(EVENTS.ACTION, {
-            type: 'test', payload
-        });
+    async testAction(payload = {}) {
+        this.emitAction('test', payload);
     },
 
 

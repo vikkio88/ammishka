@@ -11,6 +11,7 @@ const ACTIONS = {
         LEAVE: 'app:leave',
     },
     GAME: {
+        TEST_ACTION: 'game:test:action',
         ACTION: 'game:action',
         ACTIONS: {
             ROOM_CREATED: 'game:room:created',

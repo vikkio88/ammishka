@@ -29,13 +29,19 @@ const events = store => ({
         return;
       }
 
+      case ROOM_ACTIONS.TEST: {
+        console.log('test msg received', { type, payload });
+        return;
+      }
+
       default: {
         console.error('error: unknown message format', msg);
         return;
       }
 
     }
-  }
+  },
+  [EVENTS.NOTIFICATION]: msg => console.log('NOTIFICATION RECEIVED', msg)
 });
 
 const INITIAL_APP_STATE = {

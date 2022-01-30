@@ -11,8 +11,12 @@ const INITIAL_APP_STATE = {
 const game = store => {
     store.on(a.INIT, () => ({ ...INITIAL_APP_STATE }));
 
+    store.on(a.GAME.TEST_ACTION, () => {
+        socket.testAction({ some: 'info' });
+    });
+
     store.on(a.GAME.ACTION, () => {
-        socket.action();
+        //socket.testAction();
     });
 
     store.on(a.GAME.ACTIONS.ROOM_CREATED, ({ game }, payload) => {

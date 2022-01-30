@@ -25,7 +25,7 @@ io.on(e.CONNECTION, socket => {
     users.set(id, client);
     console.log('a user connected: ', id);
     console.log('users#: ', users.size);
-    socket.emit(e.MESSAGE, { yo: 1 });
+    socket.emit(e.NOTIFICATION, { yo: 1 });
     socket.on(e.DISCONNECT, () => {
         users.delete(id);
         console.log('a user disconnected: ', id);

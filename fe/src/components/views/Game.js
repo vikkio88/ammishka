@@ -11,7 +11,7 @@ const Game = () => {
             <pre>
                 {JSON.stringify({ room, admin }, null, 2)}
             </pre>
-            <button onClick={() => dispatch('game:action')}>ACTION</button>
+            <button onClick={() => dispatch(a.GAME.TEST_ACTION)}>TEST ACTION</button>
             <button className="accent" onClick={() => dispatch(a.APP.LEAVE)}>LEAVE</button>
         </div>
     );
