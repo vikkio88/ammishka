@@ -1,3 +1,4 @@
+import { ROOM_ACTIONS } from 'ammishka-shared/actions';
 import socket from '../../libs/socket';
 import a from '../actions';
 
@@ -17,6 +18,23 @@ const game = store => {
 
     store.on(a.GAME.ACTION, () => {
         //socket.testAction();
+    });
+
+    store.on(a.GAME.ADMIN_CMD, ({ game }, { command }) => {
+        const { id } = game.room;
+        socket.adminCommand(id, command);
+    });
+
+    store.on(a.GAME.RCV_ADMIN_CMD, ({ }, payload) => {
+        const { command } = payload;
+
+        switch (command) {
+            case ROOM_ACTIONS.ADMIN_CMDS.IDENTIFY: {
+                store.dispatch(a.MISC.IDENTIFY);
+                return;
+            }
+        }
+
     });
 
     store.on(a.GAME.ACTIONS.ROOM_CREATED, ({ game }, payload) => {

@@ -1,3 +1,4 @@
+const { ROOM_ACTIONS } = require('ammishka-shared/actions');
 const Room = require('../../libs/Room');
 const User = require('../../libs/User');
 
@@ -31,6 +32,13 @@ describe('Room specs', () => {
                     type: expect.any(String)
                 })
             ]),
+            userMap: expect.objectContaining({
+                [ADMIN_ID]: expect.objectContaining({
+                    id: ADMIN_ID,
+                    name: expect.any(String),
+                    type: expect.any(String)
+                })
+            }),
             game: null
         });
     });
@@ -123,6 +131,47 @@ describe('Room specs', () => {
     //it('reports error if you cannot leave the room', () => {});
 
     it('destroys the room if the admin leave', () => { });
+
+
+    it('allows admin to execute command', () => {
+        const room = getMockedRoom();
+        const result = room.adminCommand({ id: ADMIN_ID }, ROOM_ACTIONS.ADMIN_CMDS.IDENTIFY);
+        expect(result).toEqual({
+            success: true,
+            payload: {
+                command: expect.stringContaining('identify'),
+                type: expect.stringContaining('admin:cmd')
+            }
+        });
+    });
+   
+    it('rejects non admin to execute command', () => {
+        const OTHER_ID = 'someOtherId'
+        const room = getMockedRoom();
+        const result = room.adminCommand({ id: OTHER_ID }, ROOM_ACTIONS.ADMIN_CMDS.IDENTIFY);
+        expect(result).toEqual({
+            success: false,
+            payload: {
+                command: expect.stringContaining('identify'),
+                reason: expect.stringContaining('not_admin'),
+                type: expect.stringContaining('admin:cmd'),
+                userId: OTHER_ID
+            }
+        });
+    });
+   
+    it('rejects wrong commands', () => {
+        const room = getMockedRoom();
+        const result = room.adminCommand({ id: ADMIN_ID }, 'someFakeCommand');
+        expect(result).toEqual({
+            success: false,
+            payload: {
+                command: expect.stringContaining('FakeCommand'),
+                reason: expect.stringContaining('admin_cmd_not_found'),
+                type: expect.stringContaining('admin:cmd'),
+            }
+        });
+    });
 
 
 });

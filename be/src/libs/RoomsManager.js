@@ -74,6 +74,18 @@ class RoomsManager {
 
         return result;
     }
+
+    adminCommand(user, roomId, command) {
+        if (!this.rooms.has(roomId)) {
+            return a_r(false, { reason: ERRORS.ROOM.NOT_FOUND });
+        }
+
+        /** @type Room */
+        const room = this.rooms.get(roomId);
+
+
+        return room.adminCommand(user, command);
+    }
 }
 
 module.exports = RoomsManager;

@@ -1,3 +1,4 @@
+const { ROOM_ACTIONS } = require('ammishka-shared/actions');
 const Room = require('../../libs/Room');
 const RoomsManager = require('../../libs/RoomsManager');
 
@@ -145,5 +146,28 @@ describe('RoomsManager specs', () => {
         result = rm.leave(ROOM_ID, userSocketMock(ADMIN_ID));
         expect(result.success).toBe(true);
         expect(rm.rooms.has(ROOM_ID)).toBe(false);
+    });
+
+    // admin commands
+    it('proxies admin command to room if room exists', () => {
+        const fakeRoomIdGenerator = () => ROOM_ID;
+        const rm = new RoomsManager(fakeRoomIdGenerator);
+
+        rm.make(userSocketMock(ADMIN_ID));
+        const result = rm.adminCommand({ id: ADMIN_ID }, ROOM_ID, ROOM_ACTIONS.ADMIN_CMDS.IDENTIFY);
+        expect(result.success).toBe(true);
+    });
+    it('reject admin command to room if room does exists', () => {
+        const fakeRoomIdGenerator = () => ROOM_ID;
+        const rm = new RoomsManager(fakeRoomIdGenerator);
+
+        rm.make(userSocketMock(ADMIN_ID));
+        const result = rm.adminCommand({ id: ADMIN_ID }, 'notReallyARoom', ROOM_ACTIONS.ADMIN_CMDS.IDENTIFY);
+        expect(result).toEqual({
+            success: false,
+            payload: {
+                reason: expect.stringContaining('room_not_found')
+            }
+        });
     });
 });

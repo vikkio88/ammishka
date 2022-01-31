@@ -1,0 +1,36 @@
+div.Takeover-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw; 
+    height: 100vh;
+    z-index: 1;
+    opacity: .9;
+    background-color: black;
+    color: white;
+    display: flex;
+    flex: column wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+div.to-base {
+    background-color: black;
+}
+
+div.to-success {
+    background-color: #4CAF50;
+}
+
+div.to-failure {
+    background-color: #af4c4c;
+}
+
+div.to-primary {
+    background-color: #4c53af;
+}
+
+
+div.Takeover-content{
+    text-align: center;
+}

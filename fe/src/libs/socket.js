@@ -58,6 +58,10 @@ const socket = {
     async leaveRoom(roomId) {
         this.emitAction(ROOM_ACTIONS.LEAVE_ROOM, { roomId });
     },
+
+    async adminCommand(roomId, command, payload = {}) {
+        this.emitAction(ROOM_ACTIONS.ADMIN_CMD, { roomId, command, ...payload });
+    },
     async testAction(payload = {}) {
         this.emitAction('test', payload);
     },

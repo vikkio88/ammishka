@@ -18,8 +18,20 @@ const ACTIONS = {
             ROOM_JOINED: 'game:room:joined',
             ROOM_LEFT: 'game:room:left',
         },
-
+        ADMIN_CMD: 'game:room:admin_cmd',
+        RCV_ADMIN_CMD: 'game:room:rcv_admin_cmd',
     },
+
+    UI: {
+        TAKEOVER: {
+            SHOW: 'ui:takeover:show',
+            HIDE: 'ui:takeover:hide',
+        }
+    },
+
+    MISC: {
+        IDENTIFY: 'misc:identify',
+    }
 };
 
 

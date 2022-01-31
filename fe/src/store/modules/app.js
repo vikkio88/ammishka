@@ -1,5 +1,7 @@
 import { EVENTS, ROOM_ACTIONS } from 'ammishka-shared/fe';
+import { ammuzzu } from 'ammishka-shared/libs/ammuzzu';
 import socket from '../../libs/socket';
+import { TAKEOVER_TYPES } from '../../enums';
 import a from '../actions';
 
 // @TODO: move this somewhere else
@@ -29,6 +31,11 @@ const events = store => ({
         return;
       }
 
+      case ROOM_ACTIONS.ADMIN_CMD: {
+        store.dispatch(a.GAME.RCV_ADMIN_CMD, payload);
+        return;
+      }
+
       case ROOM_ACTIONS.TEST: {
         console.log('test msg received', { type, payload });
         return;
@@ -49,7 +56,6 @@ const INITIAL_APP_STATE = {
     id: null,
     isConnected: false,
     isLoading: false,
-    error: null,
   },
 };
 
@@ -82,6 +88,20 @@ const app = store => {
     const { room: { id } } = game;
     store.dispatch(a.APP.LOADING_START);
     await socket.leaveRoom(id);
+  });
+
+
+  store.on(a.MISC.IDENTIFY, ({ game, app }) => {
+    const { room: { userMap, adminId } } = game;
+    const { id } = app;
+    const type = ammuzzu.pickOne(Object.values(TAKEOVER_TYPES));
+    const user = userMap[id];
+    //TODO: could also add the user type emoji since user has type here
+    store.dispatch(a.UI.TAKEOVER.SHOW, {
+      title: `${adminId === id ? '👑' : ''}`,
+      content: `${user.name}`,
+      type
+    });
   });
 
 };

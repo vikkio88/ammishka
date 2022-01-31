@@ -49,6 +49,22 @@ const makeActionHandler = (
             }
 
             case ROOM_ACTIONS.ROOM_ACTION: {
+                return;
+            }
+
+            case ROOM_ACTIONS.ADMIN_CMD: {
+                const { roomId, command } = payload;
+                const result = roomManager.adminCommand({ id }, roomId, command);
+                if (result.success) {
+                    // to admin
+                    // socker.emit()
+                    io.to(roomId).emit(e.MESSAGE, result);
+                    return;
+                }
+
+                // error logging?
+                console.error('error', result)
+                return;
             }
 
             case ROOM_ACTIONS.TEST: {
