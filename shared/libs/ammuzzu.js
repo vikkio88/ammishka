@@ -31,8 +31,8 @@ const generator = {
     colour() {
         return ammuzzu.pickOne(names.colours);
     },
-    room() {
-        return ammuzzu.pickOne(names.rooms);
+    city() {
+        return ammuzzu.pickOne(names.cities);
     },
     mood() {
         return ammuzzu.pickOne(names.moods);
@@ -60,11 +60,11 @@ const generator = {
         return `${colour}_${mood}_${animal}`;
     },
 
-    colourMoodRoom() {
-        const room = generator.room();
+    colourMoodCity() {
+        const city = generator.city();
         const colour = generator.colour();
         const mood = generator.mood();
-        return `${colour}_${mood}_${room}`;
+        return `${colour}_${mood}_${city}`;
     }
 
 

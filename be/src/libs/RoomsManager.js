@@ -8,7 +8,7 @@ const Room = require('./Room');
 const User = require('./User');
 
 class RoomsManager {
-    constructor(idGenerator = generator.colourMoodRoom) {
+    constructor(idGenerator = generator.colourMoodCity) {
         this.idGenerator = idGenerator;
         /** @type Map<String, Room> */
         this.rooms = new Map();
