@@ -85,6 +85,9 @@ input[type=text] {
     color: #4c53af;
     font-size: 16px;
 }
+input:disabled {
+    cursor: not-allowed;
+}
 
 /* Select */
 select {
