@@ -15,6 +15,7 @@ const makeActionHandler = (
     roomManager,
     logger = defaultLogger) => {
     const id = socket.id;
+    const broadcast = roomId => io.to(roomId);
 
     return ({ type, payload = {} } = {}) => {
         switch (type) {
@@ -30,9 +31,10 @@ const makeActionHandler = (
                 const { roomId } = payload;
                 const result = roomManager.join(roomId, socket);
                 logger(`room joined`, result);
+                broadcast(roomId).emit(e.NOTIFICATION, { message: 'User Joined' });
                 socket.join(roomId);
                 // broadcasting to Room
-                io.to(roomId).emit(e.MESSAGE, result);
+                broadcast(roomId).emit(e.MESSAGE, result);
                 return;
             }
             case ROOM_ACTIONS.LEAVE_ROOM: {
@@ -44,7 +46,7 @@ const makeActionHandler = (
                 // telling user he left
                 socket.emit(e.MESSAGE, result);
                 // broadcasting to Room user left
-                io.to(roomId).emit(e.MESSAGE, result);
+                broadcast(roomId).emit(e.MESSAGE, result);
                 return;
             }
 
@@ -58,18 +60,19 @@ const makeActionHandler = (
                 if (result.success) {
                     // to admin
                     // socker.emit()
-                    io.to(roomId).emit(e.MESSAGE, result);
+                    broadcast(roomId).emit(e.MESSAGE, result);
                     return;
                 }
 
                 // error logging?
-                console.error('error', result)
+                console.error('error', result);
                 return;
             }
 
             case ROOM_ACTIONS.TEST: {
                 logger(`${id} - test ping: `, { type, payload });
                 socket.emit(e.MESSAGE, { received: true, payload: { type: type, payload } });
+                socket.emit(e.NOTIFICATION, { message: 'Test' });
                 return;
             }
             default: {

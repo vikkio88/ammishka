@@ -26,6 +26,10 @@ const ACTIONS = {
         TAKEOVER: {
             SHOW: 'ui:takeover:show',
             HIDE: 'ui:takeover:hide',
+        },
+        NOTIFICATION: {
+            SHOW: 'ui:notification:show',
+            HIDE: 'ui:notification:hide',
         }
     },
 

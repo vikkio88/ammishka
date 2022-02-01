@@ -1,13 +1,14 @@
 import { useStoreon } from 'storeon/react';
 import cx from 'classnames';
-import { Spinner } from './components/common';
-import { Lobby, Game, Takeover } from './components/views';
+import { Spinner, Toast, Takeover } from './components/common';
+import { Lobby, Game } from './components/views';
 
 
 
 function Main() {
-  const { app: { isLoading, isConnected }, ui: { takeover } } = useStoreon('app', 'ui');
+  const { app: { isLoading, isConnected }, ui: { takeover, notification } } = useStoreon('app', 'ui');
   const hasTakeover = Boolean(takeover);
+  const hasNotification = Boolean(notification);
   return (
     <>
       <main className={cx({ 'centered': isLoading })}>
@@ -16,6 +17,7 @@ function Main() {
         {(!isLoading && isConnected) && <Game />}
       </main>
       {hasTakeover && <Takeover {...takeover} />}
+      {<Toast show={hasNotification} {...notification} />}
     </>
   );
 }

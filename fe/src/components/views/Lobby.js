@@ -10,27 +10,11 @@ const STATES = {
 };
 
 
-const CARD_TYPES = {
-    FRENCH: 'french'
-};
-
-const CARD_TYPES_LABELS = {
-    [CARD_TYPES.FRENCH]: 'French Cards'
-};
-
 const GameCreation = () => {
     const { dispatch } = useStoreon();
     return (
         <div className='Lobby-subWrapper'>
-            <select>
-                {
-                    Object.keys(CARD_TYPES)
-                        .map(c => (
-                            <option key={c} value={CARD_TYPES[c]}>{CARD_TYPES_LABELS[CARD_TYPES[c]]}</option>
-                        ))
-                }
-            </select>
-            <button onClick={() => dispatch(a.APP.CREATE, { type: CARD_TYPES.FRENCH })}>Create</button>
+            <button onClick={() => dispatch(a.APP.CREATE)}>Create Room 🎮</button>
         </div>
     );
 };
@@ -55,8 +39,8 @@ const Lobby = () => {
             </h1>
             {state === STATES.NOTHING && (
                 <>
-                    <button className='primary' onClick={() => setState(STATES.CREATING)}>Create</button>
-                    <button onClick={() => setState(STATES.JOINING)}>Join</button>
+                    <button className='primary' onClick={() => setState(STATES.CREATING)}>Create Room</button>
+                    <button onClick={() => setState(STATES.JOINING)}>Join Room</button>
                 </>
             )}
 

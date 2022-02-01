@@ -31,6 +31,27 @@ const ui = store => {
             }
         };
     });
+
+    store.on(a.UI.NOTIFICATION.SHOW, ({ ui }, { message, type = null, timeout = 3000 } = {}) => {
+        setTimeout(() => store.dispatch(a.UI.NOTIFICATION.HIDE), timeout);
+        return {
+            ui: {
+                ...ui,
+                notification: {
+                    message
+                }
+            }
+        };
+    });
+
+    store.on(a.UI.NOTIFICATION.HIDE, ({ ui }) => {
+        return {
+            ui: {
+                ...ui,
+                notification: null
+            }
+        };
+    });
 };
 
 export default ui;

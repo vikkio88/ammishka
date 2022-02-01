@@ -9,10 +9,19 @@ div.Lobby-wrapper {
     height: 250px;
 }
 
-div.Lobby-subWrapper {
-    width: 100%;
+div.Lobby-wrapper button {
+    margin-top: 1em;
 }
 
-div.Lobby-wrapper button {
-    margin-top: 1.5em;
+div.Lobby-subWrapper {
+    margin-top: 2em;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+div.Lobby-subWrapper button {
+    margin-top: 0;
 }

@@ -48,7 +48,12 @@ const events = store => ({
 
     }
   },
-  [EVENTS.NOTIFICATION]: msg => console.log('NOTIFICATION RECEIVED', msg)
+  [EVENTS.NOTIFICATION]: msg => {
+    console.log('NOTIFICATION RECEIVED', msg);
+    // todo: check standard notification message
+    const { message } = msg;
+    store.dispatch(a.UI.NOTIFICATION.SHOW, { message });
+  }
 });
 
 const INITIAL_APP_STATE = {
