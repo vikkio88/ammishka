@@ -19,8 +19,7 @@
     "dev": "react-scripts start",
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "deploy": "surge build/ --domain ammishka.surge.sh"
   },
   "eslintConfig": {
     "extends": [
