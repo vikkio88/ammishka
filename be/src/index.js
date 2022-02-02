@@ -1,9 +1,13 @@
 require('dotenv').config();
 const { createServer } = require('http');
 const { Server } = require('socket.io');
-const httpServer = createServer();
+const { REMOTE_HOST, LOCAL_PORT, PORT, APP_VERSION } = process.env;
+const requestListener = (req, res) => {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(`${JSON.stringify({ version: APP_VERSION, remote: REMOTE_HOST })}`);
+};
+const httpServer = createServer(requestListener);
 
-const { REMOTE_HOST, LOCAL_PORT } = process.env;
 
 
 const { EVENTS: e } = require('ammishka-shared/events');
@@ -37,5 +41,7 @@ io.on(e.CONNECTION, socket => {
     socket.on(e.ACTION, actionHandler);
 });
 
-
-httpServer.listen(LOCAL_PORT);
+console.log(`ammishka-server: app version ${APP_VERSION}`);
+console.log(`ammishka-server: starting at port ${PORT || LOCAL_PORT}`);
+console.log(`ammishka-server: CORS setup for ${REMOTE_HOST}`);
+httpServer.listen(PORT || LOCAL_PORT);

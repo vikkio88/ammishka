@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build:be": "bash scripts/build_be.sh",
+    "deploy:be": "bash scripts/deploy_be.sh",
     "dev:be": "cd be && npm run dev",
     "dev:fe": "cd fe && npm run dev",
     "dev": "concurrently --kill-others \"npm:dev:be\" \"npm:dev:fe\""
