@@ -25,12 +25,16 @@ const game = store => {
         socket.adminCommand(id, command);
     });
 
-    store.on(a.GAME.RCV_ADMIN_CMD, ({ }, payload) => {
+    store.on(a.GAME.RCV_ADMIN_CMD, (_, payload) => {
         const { command } = payload;
 
         switch (command) {
             case ROOM_ACTIONS.ADMIN_CMDS.IDENTIFY: {
                 store.dispatch(a.MISC.IDENTIFY);
+                return;
+            }
+            default: {
+                console.error(`admin:cmd:${command}, cannot comply`);
                 return;
             }
         }

@@ -6,7 +6,7 @@ const AdminActions = ({ dispatch }) => {
         <button
             onClick={() => dispatch(a.GAME.ADMIN_CMD, { command: ROOM_ACTIONS.ADMIN_CMDS.IDENTIFY })}
         >
-            IDENTIFY
+            🙋
         </button>
     );
 };

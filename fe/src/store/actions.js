@@ -10,6 +10,7 @@ const ACTIONS = {
         JOIN: 'app:join',
         LEAVE: 'app:leave',
     },
+    // maybe rename this ROOM
     GAME: {
         TEST_ACTION: 'game:test:action',
         ACTION: 'game:action',

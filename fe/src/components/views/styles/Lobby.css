@@ -9,6 +9,12 @@ div.Lobby-wrapper {
     height: 250px;
 }
 
+@media only screen and (max-width: 460px) {
+    div.Lobby-wrapper {
+        width: 80%;
+    }
+}
+
 div.Lobby-wrapper button {
     margin-top: 1em;
 }

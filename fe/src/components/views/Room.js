@@ -2,27 +2,29 @@ import { useState } from 'react';
 import cx from 'classnames';
 import { useStoreon } from 'storeon/react';
 import a from '../../store/actions';
-import { UserList, RoomActions, AdminActions } from '../game';
-import './styles/Game.css';
+import { UserList, RoomActions, AdminActions } from '../room';
+import './styles/Room.css';
 
-const Game = () => {
+const Room = () => {
     const [isNavHidden, setIsNavHidden] = useState(true);
     const toggleNav = () => setIsNavHidden(!isNavHidden);
     const navCx = cx({ 'hidden': isNavHidden });
-    const showNavBtnCx = cx('tglNavButton', 'left', !isNavHidden && 'hidden');
+    const showNavBtnCx = cx('tglNavButton', 'outer', !isNavHidden && 'hidden');
     const { dispatch, game: { room, admin } } = useStoreon('game');
     const isAdmin = admin;
     return (
-        <div className="Game-wrapper">
+        <div className="Room-wrapper">
+            {/* Move nav to its own component */}
             <nav className={navCx}>
                 <div className="room-commands">
                     {<RoomActions dispatch={dispatch} />}
                     {isAdmin && <AdminActions dispatch={dispatch} />}
                 </div>
-                <button className='tglNavButton' onClick={toggleNav}>👆</button>
-                <input type="text" value={room.id} disabled style={{ textAlign: 'center' }} size={10} />
+                <input type="text" value={room.id} disabled style={{ textAlign: 'center', fontSize: '10px', padding: '1px' }} size={20} />
+                <button className='tglNavButton' onClick={toggleNav}>❌</button>
             </nav>
-            <button onClick={toggleNav} className={showNavBtnCx}>👇</button>
+            <button onClick={toggleNav} className={showNavBtnCx}>⚙️</button>
+            {/* Move nav to its own component */}
             <section>
                 <input type="text" value={room.game} disabled={!isAdmin} style={{ textAlign: 'center' }} size={10} placeholder="Game" />
                 <UserList users={room.users} adminId={room.adminId} isAdmin={isAdmin} dispatch={dispatch} />
@@ -34,4 +36,4 @@ const Game = () => {
     );
 };
 
-export default Game;
+export default Room;

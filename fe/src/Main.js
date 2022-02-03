@@ -1,7 +1,7 @@
 import { useStoreon } from 'storeon/react';
 import cx from 'classnames';
 import { Spinner, Toast, Takeover } from './components/common';
-import { Lobby, Game } from './components/views';
+import { Lobby, Room } from './components/views';
 
 
 
@@ -14,7 +14,7 @@ function Main() {
       <main className={cx({ 'centered': isLoading })}>
         {isLoading && <Spinner />}
         {(!isLoading && !isConnected) && <Lobby />}
-        {(!isLoading && isConnected) && <Game />}
+        {(!isLoading && isConnected) && <Room />}
       </main>
       {hasTakeover && <Takeover {...takeover} />}
       {<Toast show={hasNotification} {...notification} />}

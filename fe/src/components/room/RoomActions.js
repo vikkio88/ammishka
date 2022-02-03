@@ -6,7 +6,7 @@ const RoomActions = ({ dispatch }) => {
             className="accent"
             onClick={() => dispatch(a.APP.LEAVE)}
         >
-            LEAVE
+             🚪🚶
         </button>
     );
 };
