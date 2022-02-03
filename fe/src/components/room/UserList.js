@@ -1,16 +1,26 @@
+import cx from 'classnames';
 import './styles/UserList.css';
 
-const UserList = ({ users, adminId, isAdmin, dispatch }) => {
+const UserList = ({ me, users, adminId, isAdmin, dispatch }) => {
     return (
-        <ul className='UserList'>
-            {users.map(u => {
-                return (
-                    <li key={u.id}>
-                        {u.id === adminId ? '👑 ' : '👤 '}{u.name} {/* TODO: add type too */}
-                    </li>
-                );
-            })}
-        </ul>
+        <div className='UserList-wrapper'>
+            <h2>Users</h2>
+            <ul className='UserList'>
+                {users.map(u => {
+                    const liClasses = cx(me === u.id && 'userSelf');
+                    return (
+                        <li key={u.id} className={liClasses}>
+                            <span>
+                                {u.id === adminId ? '👑 ' : '👤 '}
+                            </span>
+                            <span>
+                                {u.name} {/* TODO: add type too */}
+                            </span>
+                        </li>
+                    );
+                })}
+            </ul>
+        </div>
     );
 };
 

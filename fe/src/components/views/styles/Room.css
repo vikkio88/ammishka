@@ -34,9 +34,9 @@
     flex: 4;
     margin: 1em;
     border-radius: 4px;
-    width: 90%;
-    margin-top: 2.5em;
+    width: 100%;
     padding: 1em;
+    margin-top: 2.5em;
 }
 
 .Room-wrapper > nav.hidden {
