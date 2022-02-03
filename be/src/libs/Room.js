@@ -122,6 +122,7 @@ class Room {
             id: this.id,
             adminId: this.adminId,
             isReady: this.isReady(),
+            options: { ...this.options },
             users,
             userMap,
             game: this.game ? this.game.toJson() : null

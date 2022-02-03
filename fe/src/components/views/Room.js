@@ -2,7 +2,7 @@ import { useState } from 'react';
 import cx from 'classnames';
 import { useStoreon } from 'storeon/react';
 import a from '../../store/actions';
-import { RoomInfo, RoomActions, AdminActions, GameSetup } from '../room';
+import { RoomInfo, RoomActions, AdminActions } from '../room';
 import './styles/Room.css';
 
 const Room = () => {
@@ -21,7 +21,6 @@ const Room = () => {
                     {<RoomActions dispatch={dispatch} />}
                     {isAdmin && <AdminActions dispatch={dispatch} />}
                 </div>
-                <input type="text" value={room.id} disabled style={{ textAlign: 'center', fontSize: '10px', padding: '1px' }} size={20} readOnly />
                 <button className='tglNavButton' onClick={toggleNav}>❌</button>
             </nav>
             <button onClick={toggleNav} className={showNavBtnCx}>⚙️</button>
@@ -29,7 +28,6 @@ const Room = () => {
 
             <section>
                 <RoomInfo me={me} room={room} isAdmin={isAdmin} dispatch={dispatch} />
-                <GameSetup />
             </section>
             <footer>
                 <button onClick={() => dispatch(a.GAME.TEST_ACTION)}>TEST ACTION</button>

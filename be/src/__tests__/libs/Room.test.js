@@ -39,6 +39,10 @@ describe('Room specs', () => {
                     type: expect.any(String)
                 })
             }),
+            options: expect.objectContaining({
+                maxUsers: expect.any(Number),
+                minUsers: expect.any(Number),
+            }),
             game: null
         });
     });
@@ -144,9 +148,9 @@ describe('Room specs', () => {
             }
         });
     });
-   
+
     it('rejects non admin to execute command', () => {
-        const OTHER_ID = 'someOtherId'
+        const OTHER_ID = 'someOtherId';
         const room = getMockedRoom();
         const result = room.adminCommand({ id: OTHER_ID }, ROOM_ACTIONS.ADMIN_CMDS.IDENTIFY);
         expect(result).toEqual({
@@ -159,7 +163,7 @@ describe('Room specs', () => {
             }
         });
     });
-   
+
     it('rejects wrong commands', () => {
         const room = getMockedRoom();
         const result = room.adminCommand({ id: ADMIN_ID }, 'someFakeCommand');
