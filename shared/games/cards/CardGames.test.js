@@ -1,5 +1,5 @@
 const { CARDS } = require('.');
-const { SingleDeckCardGame } = require('./CardGames');
+const { SingleDeckCardGame, CARD_GAME_ACTIONS } = require('./CardGames');
 const Deck = require('./Deck');
 
 const PLAYER_ONE = 'idPlayer1';
@@ -43,4 +43,45 @@ describe('SingleDeckCardGame specs', () => {
             }
         });
     });
+
+    it('works correctly the actions', () => {
+        const deck = Deck.makeFromConfig(CARDS.DECKS.CONFIG[CARDS.TYPES.FRENCH]);
+        const g = new SingleDeckCardGame(deck, PLAYERS);
+
+        let result = g.action(PLAYER_ONE, CARD_GAME_ACTIONS.DRAW);
+        expect(result).toEqual({
+            success: true,
+            payload: {
+                hand: expect.arrayContaining([
+                    expect.objectContaining({
+                        id: 'diamonds_13',
+                        seed: 'diamonds',
+                        value: 13,
+                    })
+                ])
+            }
+        });
+        
+        result = g.action(PLAYER_ONE, CARD_GAME_ACTIONS.DRAW);
+        expect(result).toEqual({
+            success: true,
+            payload: {
+                hand: expect.arrayContaining([
+                    expect.objectContaining({
+                        id: 'diamonds_13',
+                        seed: 'diamonds',
+                        value: 13,
+                    }),
+                    expect.objectContaining({
+                        id: 'diamonds_12',
+                        seed: 'diamonds',
+                        value: 12,
+                    })
+                ])
+            }
+        });
+
+    });
+
+
 });
