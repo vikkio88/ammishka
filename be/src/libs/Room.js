@@ -1,8 +1,8 @@
 const { ROOM_ACTIONS } = require('ammishka-shared/actions');
 const { ERRORS } = require('ammishka-shared/errors');
+const Game = require('ammishka-shared/games/Game');
 const { actionResult: a_r } = require('ammishka-shared/payloads');
 
-const Game = require('./Game');
 const User = require('./User');
 
 const defaultRoomOptions = {

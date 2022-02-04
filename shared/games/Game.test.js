@@ -1,4 +1,4 @@
-const Game = require('../../libs/Game');
+const Game = require('./Game');
 
 const getMockedGame = () => {
     return new Game();
