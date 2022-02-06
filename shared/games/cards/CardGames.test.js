@@ -18,6 +18,7 @@ describe('SingleDeckCardGame specs', () => {
             hasStarted: false,
             isReady: true,
             turns: {
+                currentPhase: 'draw_phase',
                 currentTurn: [],
                 order: [PLAYER_ONE, PLAYER_TWO],
                 baseOrder: [PLAYER_ONE, PLAYER_TWO],
@@ -35,6 +36,7 @@ describe('SingleDeckCardGame specs', () => {
             hasStarted: false,
             isReady: true,
             turns: {
+                currentPhase: 'draw_phase',
                 currentTurn: [],
                 order: [PLAYER_ONE],
                 baseOrder: [PLAYER_ONE],
@@ -52,34 +54,44 @@ describe('SingleDeckCardGame specs', () => {
         expect(result).toEqual({
             success: true,
             payload: {
-                hand: expect.arrayContaining([
-                    expect.objectContaining({
-                        id: 'diamonds_13',
-                        seed: 'diamonds',
-                        value: 13,
-                    })
-                ])
+                hand: expect.objectContaining({
+                    ownerId: PLAYER_ONE,
+                    cards: expect.arrayContaining([
+                        expect.objectContaining({
+                            id: 'diamonds_13',
+                            seed: 'diamonds',
+                            value: 13,
+                        })
+                    ])
+                })
             }
         });
-        
+
+
         result = g.action(PLAYER_ONE, CARD_GAME_ACTIONS.DRAW);
         expect(result).toEqual({
             success: true,
             payload: {
-                hand: expect.arrayContaining([
-                    expect.objectContaining({
-                        id: 'diamonds_13',
-                        seed: 'diamonds',
-                        value: 13,
-                    }),
-                    expect.objectContaining({
-                        id: 'diamonds_12',
-                        seed: 'diamonds',
-                        value: 12,
-                    })
-                ])
+                hand: expect.objectContaining({
+                    ownerId: PLAYER_ONE,
+                    cards: expect.arrayContaining([
+                        expect.objectContaining({
+                            id: 'diamonds_13',
+                            seed: 'diamonds',
+                            value: 13,
+                        }),
+                        expect.objectContaining({
+                            id: 'diamonds_12',
+                            seed: 'diamonds',
+                            value: 12,
+                        })
+                    ])
+                })
             }
         });
+        expect(g.toJson().turns.currentPhase).toBe('play_phase');
+
+        // Play Card
 
     });
 
