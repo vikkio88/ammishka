@@ -63,6 +63,11 @@ describe('SingleDeckCardGame specs', () => {
                             value: 13,
                         })
                     ])
+                }),
+                card: expect.objectContaining({
+                    id: 'diamonds_13',
+                    seed: 'diamonds',
+                    value: 13,
                 })
             }
         });
@@ -86,6 +91,11 @@ describe('SingleDeckCardGame specs', () => {
                             value: 12,
                         })
                     ])
+                }),
+                card: expect.objectContaining({
+                    id: 'diamonds_12',
+                    seed: 'diamonds',
+                    value: 12,
                 })
             }
         });
