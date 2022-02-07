@@ -18,10 +18,14 @@ class Hand {
     }
 
     add(card) {
+        // make sure you check if sometimes you
+        // have duplicates
         this.cardsMap.set(card.id, card);
     }
 
     get(cardId) {
+        if (!this.has(cardId)) return null;
+        
         const card = this.cardsMap.get(cardId);
         this.cardsMap.delete(cardId);
         return card;

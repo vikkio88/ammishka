@@ -19,12 +19,13 @@ const ACTIONS_CONDITIONS = {
     [ACTIONS.DRAW]: ({ turns, playerId, hands }) => turns.order[0] === playerId,
     [ACTIONS.PLAY_CARD]: ({ turns, playerId, hands, payload: { cardId } }) => turns.order[0] === playerId && hands.has(playerId) && hands.get(playerId).has(cardId),
     [ACTIONS.LOOK_AT_OWN_HAND]: ({ hands, playerId }) => hands.has(playerId),
+    [ACTIONS.END_PHASE]: ({ turns, playerId }) => turns.order[0] === playerId,
 };
 
 const ACTIONS_EFFECTS = {
     [ACTIONS.DRAW]: () => ({ endPhase: true }),
     [ACTIONS.PLAY_CARD]: () => ({ endPhase: true }),
-    [ACTIONS.LOOK_AT_OWN_HAND]: () => { },
+    default: () => ({}),
 };
 
 const PHASES = {
@@ -42,6 +43,7 @@ const defaultConfig = {
     minPlayers: 2, maxPlayers: 2,
     phases: [PHASES.DRAW, PHASES.PLAY],
     phasesActions: PHASES_ACTIONS,
+    indipendentActions: [ACTIONS.LOOK_AT_OWN_HAND, ACTIONS.SHOW_HAND],
     initialSetup: ({ deck, players, hands, order }) => ({ deck, players, hands, order }),
 };
 
@@ -76,7 +78,7 @@ class SingleDeckCardGame extends Game {
             currentTurn: [],
             log: [],
             order: baseOrder,
-            baseOrder: baseOrder,
+            baseOrder: [...baseOrder],
             turn: 0,
         };
         const { deck, players, hands, order } = this.config.initialSetup({
@@ -98,14 +100,26 @@ class SingleDeckCardGame extends Game {
     }
 
     action(playerId, type, payload = {}) {
-        if (!this.isReady()) return a_r(
-            false,
-            { reason: `Game is not Ready: ${type} , ${playerId}` }
-        );
+        if (!this.isReady()) {
+            console.error(`${playerId}: tried action ${type}, while game was not ready`);
+            return a_r(
+                false,
+                { reason: `Game is not Ready: ${type} , ${playerId}` }
+            );
+        }
 
         if (!Object.values(ACTIONS).includes(type)) {
-            console.error(`Not an existing action ${type} , ${playerId}`);
-            return a_r(false, { reason: `Not an existing action ${type} , ${playerId}` });
+            console.error(`${playerId}: tried not an existing action ${type}`);
+            return a_r(false, { reason: `Not an existing action ${type}` });
+        }
+
+        // check if action is compatible with phase
+        if (
+            // some actions can be done regardless of the phase
+            !this.config.indipendentActions.includes(type) &&
+            !this.phases.canDo(type)) {
+            console.error(`${playerId}: tried ${type} on phase ${this.phases.current()}`);
+            return a_r(false, { reason: `Cannot do ${type} on ${this.phases.current()} , ${playerId}` });
         }
 
 
@@ -121,18 +135,23 @@ class SingleDeckCardGame extends Game {
         }
 
         let result = null;
+
         // make action
         switch (type) {
             case ACTIONS.DRAW: {
                 const card = this.deck.draw();
                 const hand = this.hands.get(playerId);
                 hand.add(card);
-                result = a_r(true, { hand: hand.toJson(), card });
+                result = a_r(true, { hand: hand.toJson(), drawnCard: card.toJson() });
                 break;
             }
             case ACTIONS.LOOK_AT_OWN_HAND: {
                 const hand = this.hands.get(playerId);
                 result = a_r(true, { hand: hand.toJson() });
+                break;
+            }
+            case ACTIONS.END_PHASE: {
+                result = a_r(true, { phases: { current: this.phases.current(), next: this.phases.next() } });
                 break;
             }
             case ACTIONS.PLAY_CARD: {
@@ -142,11 +161,15 @@ class SingleDeckCardGame extends Game {
                 const card = hand.get(payload.cardId);
                 // here you play the card
 
-                result = a_r(true, { hand: hand.toJson() });
+                result = a_r(true, {
+                    playedCard: card.toJson(),
+                    hand: hand.toJson()
+                });
                 break;
             }
             default: {
                 result = a_r(false, { reason: 'This should never happen' });
+                break;
             }
         }
 
@@ -154,16 +177,21 @@ class SingleDeckCardGame extends Game {
 
         this.turns.currentTurn.push([playerId, { type, payload }]);
 
-        const { endPhase = false } = ACTIONS_EFFECTS[type];
+        const { endPhase = false } = (ACTIONS_EFFECTS[type] || ACTIONS_EFFECTS.default)();
         let endTurn = false;
-        if (endPhase) endTurn = this.phases.end();
+        if (endPhase) {
+            const endPhaseResult = this.phases.end();
+            endTurn = endPhaseResult.endTurn;
+        }
         //if action happened successfully && endTurn
         if (endTurn) {
+            this.phases.reset();
             this.turns.order.shift();
             if (this.turns.order.length === 0) {
                 this.turns.turn += 1;
                 this.turns.log.push(this.turns.currentTurn);
                 this.turns.currentTurn = [];
+                this.turns.order = this.turns.baseOrder;
             }
         }
 
@@ -182,10 +210,20 @@ class SingleDeckCardGame extends Game {
         return cPlayers >= minPlayers && cPlayers <= maxPlayers;
     }
 
+    // might move turns to 
+    // its own class
+    turnsToJson() {
+        return {
+            ...this.turns,
+            currentPhase: this.phases.current(),
+        };
+    }
+
     toJson() {
         return {
+            phase: this.phases.toJson(),
             deck: this.deck.toJson(),
-            turns: { ...this.turns },
+            turns: this.turnsToJson(),
             hasStarted: this.hasStarted(),
             isReady: this.isReady(),
         };
