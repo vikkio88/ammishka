@@ -55,9 +55,13 @@ describe('SingleDeckCardGame specs', () => {
     it('works correctly the actions', () => {
         const deck = Deck.makeFromConfig(CARDS.DECKS.CONFIG[CARDS.TYPES.FRENCH]);
         const g = new SingleDeckCardGame(deck, PLAYERS);
+        // turning error loggin off
+        g.setLogging({ off: true });
+        // so I dont get annoying output
         const gameServerMock = {
             gameStateUpdate: jest.fn(),
-            reportResult: jest.fn()
+            reportResult: jest.fn(),
+            notify: jest.fn()
         };
         g.setServer(gameServerMock);
 
@@ -94,6 +98,20 @@ describe('SingleDeckCardGame specs', () => {
                 })
             }
         });
+        expect(gameServerMock.notify).toHaveBeenCalledWith(expect.objectContaining({
+            message: expect.stringContaining(`Drew`)
+        }));
+        expect(gameServerMock.gameStateUpdate).toHaveBeenCalledWith(expect.objectContaining({
+            turns: expect.objectContaining({ currentPhase: 'play_phase' })
+        }));
+        expect(gameServerMock.reportResult).toHaveBeenCalledWith(expect.objectContaining({
+            success: true
+        }));
+
+        gameServerMock.notify.mockClear();
+        gameServerMock.gameStateUpdate.mockClear();
+        gameServerMock.reportResult.mockClear();
+
 
         expect(g.toJson().turns.currentPhase).toBe('play_phase');
 
@@ -101,9 +119,19 @@ describe('SingleDeckCardGame specs', () => {
         expect(result).toEqual({
             success: false,
             payload: {
-                reason: expect.stringContaining('Cannot do draw on play_phase')
+                reason: expect.stringContaining('Not a valid action on this phase')
             }
         });
+        expect(gameServerMock.notify).not.toHaveBeenCalled();
+        expect(gameServerMock.gameStateUpdate).not.toHaveBeenCalled();
+        expect(gameServerMock.reportResult).toHaveBeenCalledWith(expect.objectContaining({
+            success: false
+        }));
+
+        gameServerMock.notify.mockClear();
+        gameServerMock.gameStateUpdate.mockClear();
+        gameServerMock.reportResult.mockClear();
+
 
         result = g.action(PLAYER_ONE, CARD_GAME_ACTIONS.LOOK_AT_OWN_HAND);
         expect(result).toEqual({
@@ -122,6 +150,16 @@ describe('SingleDeckCardGame specs', () => {
             }
         });
 
+        expect(gameServerMock.notify).toHaveBeenCalledWith(expect.objectContaining({
+            message: expect.stringContaining(`Looked`)
+        }));
+        expect(gameServerMock.gameStateUpdate).toHaveBeenCalledWith(expect.objectContaining({
+            turns: expect.objectContaining({ currentPhase: 'play_phase' })
+        }));
+        expect(gameServerMock.reportResult).toHaveBeenCalledWith(expect.objectContaining({
+            success: true
+        }));
+
         expect(g.toJson().turns.currentPhase).toBe('play_phase');
         expect(g.toJson().phase).toEqual({
             current: 'play_phase',
@@ -139,7 +177,7 @@ describe('SingleDeckCardGame specs', () => {
         expect(result).toEqual({
             success: false,
             payload: {
-                reason: expect.stringContaining('condition failed')
+                reason: expect.stringContaining(`Can't perform this action`)
             }
         });
 
@@ -148,7 +186,7 @@ describe('SingleDeckCardGame specs', () => {
         expect(result).toEqual({
             success: false,
             payload: {
-                reason: expect.stringContaining('condition failed')
+                reason: expect.stringContaining(`Can't perform this action`)
             }
         });
 
@@ -188,7 +226,7 @@ describe('SingleDeckCardGame specs', () => {
         expect(result).toEqual({
             success: false,
             payload: {
-                reason: expect.stringContaining('condition failed')
+                reason: expect.stringContaining(`Can't perform this action`)
             }
         });
 

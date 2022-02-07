@@ -15,6 +15,15 @@ const ACTIONS = {
     END_TURN: 'end_phase',
 };
 
+const ACTIONS_LABELS = {
+    [ACTIONS.DRAW]: 'Drew a card',
+    [ACTIONS.PLAY_CARD]: 'Played a card',
+    [ACTIONS.LOOK_AT_OWN_HAND]: 'Looked at his hand',
+    [ACTIONS.SHOW_HAND]: 'Showed his hand',
+    [ACTIONS.END_PHASE]: 'Finished the Phase',
+    [ACTIONS.END_TURN]: 'Ended his Turn',
+};
+
 const ACTIONS_CONDITIONS = {
     [ACTIONS.DRAW]: ({ turns, playerId, hands }) => turns.order[0] === playerId,
     [ACTIONS.PLAY_CARD]: ({ turns, playerId, hands, payload: { cardId } }) => turns.order[0] === playerId && hands.has(playerId) && hands.get(playerId).has(cardId),
@@ -99,27 +108,38 @@ class SingleDeckCardGame extends Game {
         return this.turns.order[0] === playerId;
     }
 
+    reportError({ playerId, type, problem, }, reason) {
+        this.canLog() && console.error(`${playerId}: (action ${type}), ${problem}`);
+        const result = a_r(false, { reason });
+        this.getServer().reportResult(result);
+        return result;
+    }
+
     action(playerId, type, payload = {}) {
         if (!this.isReady()) {
-            console.error(`${playerId}: tried action ${type}, while game was not ready`);
-            return a_r(
-                false,
-                { reason: `Game is not Ready: ${type} , ${playerId}` }
+            return this.reportError(
+                { playerId, type, problem: 'game was not ready' },
+                `Game is not Ready`
             );
         }
 
         if (!Object.values(ACTIONS).includes(type)) {
-            console.error(`${playerId}: tried not an existing action ${type}`);
-            return a_r(false, { reason: `Not an existing action ${type}` });
+            return this.reportError(
+                { playerId, type, problem: 'tried not an existing action' },
+                `Not an existing action`
+            );
         }
 
         // check if action is compatible with phase
         if (
             // some actions can be done regardless of the phase
             !this.config.indipendentActions.includes(type) &&
-            !this.phases.canDo(type)) {
-            console.error(`${playerId}: tried ${type} on phase ${this.phases.current()}`);
-            return a_r(false, { reason: `Cannot do ${type} on ${this.phases.current()} , ${playerId}` });
+            !this.phases.canDo(type)
+        ) {
+            return this.reportError(
+                { playerId, type, problem: `tried on wrong phase (phase ${this.phases.current()})` },
+                `Not a valid action on this phase`
+            );
         }
 
 
@@ -130,12 +150,13 @@ class SingleDeckCardGame extends Game {
             payload, // this will have things like cardId
         })
         ) {
-            console.error(`Not a valid action (condition failed) ${type}: , ${playerId}`);
-            return a_r(false, { reason: `Not a valid action (condition failed) ${type}: , ${playerId}` });
+            return this.reportError(
+                { playerId, type, problem: ` action pre-condition failed` },
+                `Can't perform this action`
+            );
         }
 
         let result = null;
-        // if result false report
 
         // make action
         switch (type) {
@@ -197,6 +218,7 @@ class SingleDeckCardGame extends Game {
         }
 
         // here might want to broadcast new game state
+        this.getServer().notify({ playerId, message: `${ACTIONS_LABELS[type]}` });
         this.getServer().gameStateUpdate(this.toJson());
         this.getServer().reportResult(result);
         return result;
