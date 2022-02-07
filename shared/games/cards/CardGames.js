@@ -135,6 +135,7 @@ class SingleDeckCardGame extends Game {
         }
 
         let result = null;
+        // if result false report
 
         // make action
         switch (type) {
@@ -196,7 +197,8 @@ class SingleDeckCardGame extends Game {
         }
 
         // here might want to broadcast new game state
-
+        this.getServer().gameStateUpdate(this.toJson());
+        this.getServer().reportResult(result);
         return result;
     }
 

@@ -55,6 +55,11 @@ describe('SingleDeckCardGame specs', () => {
     it('works correctly the actions', () => {
         const deck = Deck.makeFromConfig(CARDS.DECKS.CONFIG[CARDS.TYPES.FRENCH]);
         const g = new SingleDeckCardGame(deck, PLAYERS);
+        const gameServerMock = {
+            gameStateUpdate: jest.fn(),
+            reportResult: jest.fn()
+        };
+        g.setServer(gameServerMock);
 
         expect(g.toJson().turns.currentPhase).toBe('draw_phase');
         expect(g.toJson().phase).toEqual({
