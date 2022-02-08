@@ -98,19 +98,11 @@ describe('SingleDeckCardGame specs', () => {
                 })
             }
         });
-        expect(gameServerMock.notify).toHaveBeenCalledWith(expect.objectContaining({
-            message: expect.stringContaining(`Drew`)
-        }));
-        expect(gameServerMock.gameStateUpdate).toHaveBeenCalledWith(expect.objectContaining({
-            turns: expect.objectContaining({ currentPhase: 'play_phase' })
-        }));
-        expect(gameServerMock.reportResult).toHaveBeenCalledWith(expect.objectContaining({
-            success: true
-        }));
-
-        gameServerMock.notify.mockClear();
-        gameServerMock.gameStateUpdate.mockClear();
-        gameServerMock.reportResult.mockClear();
+        checkGameServerAsserts(gameServerMock, {
+            notify: { message: expect.stringContaining('Drew') },
+            gameStateUpdate: { turns: expect.objectContaining({ currentPhase: 'play_phase' }) },
+            reportResult: { success: true }
+        });
 
 
         expect(g.toJson().turns.currentPhase).toBe('play_phase');
@@ -122,15 +114,11 @@ describe('SingleDeckCardGame specs', () => {
                 reason: expect.stringContaining('Not a valid action on this phase')
             }
         });
-        expect(gameServerMock.notify).not.toHaveBeenCalled();
-        expect(gameServerMock.gameStateUpdate).not.toHaveBeenCalled();
-        expect(gameServerMock.reportResult).toHaveBeenCalledWith(expect.objectContaining({
-            success: false
-        }));
-
-        gameServerMock.notify.mockClear();
-        gameServerMock.gameStateUpdate.mockClear();
-        gameServerMock.reportResult.mockClear();
+        checkGameServerAsserts(gameServerMock, {
+            notify: false,
+            gameStateUpdate: false,
+            reportResult: { success: false }
+        });
 
 
         result = g.action(PLAYER_ONE, CARD_GAME_ACTIONS.LOOK_AT_OWN_HAND);
@@ -149,16 +137,12 @@ describe('SingleDeckCardGame specs', () => {
                 })
             }
         });
+        checkGameServerAsserts(gameServerMock, {
+            notify: { message: expect.stringContaining('Looked') },
+            gameStateUpdate: { turns: expect.objectContaining({ currentPhase: 'play_phase' }) },
+            reportResult: { success: true }
+        });
 
-        expect(gameServerMock.notify).toHaveBeenCalledWith(expect.objectContaining({
-            message: expect.stringContaining(`Looked`)
-        }));
-        expect(gameServerMock.gameStateUpdate).toHaveBeenCalledWith(expect.objectContaining({
-            turns: expect.objectContaining({ currentPhase: 'play_phase' })
-        }));
-        expect(gameServerMock.reportResult).toHaveBeenCalledWith(expect.objectContaining({
-            success: true
-        }));
 
         expect(g.toJson().turns.currentPhase).toBe('play_phase');
         expect(g.toJson().phase).toEqual({
@@ -189,6 +173,11 @@ describe('SingleDeckCardGame specs', () => {
                 reason: expect.stringContaining(`Can't perform this action`)
             }
         });
+        checkGameServerAsserts(gameServerMock, {
+            notify: false,
+            gameStateUpdate: false,
+            reportResult: { success: false }
+        });
 
         // playing card correctly
         result = g.action(PLAYER_ONE, CARD_GAME_ACTIONS.PLAY_CARD, { cardId: 'diamonds_13' });
@@ -218,6 +207,11 @@ describe('SingleDeckCardGame specs', () => {
             [PLAYER_ONE, { type: 'look_at_own_hand', payload: {} }],
             [PLAYER_ONE, { type: 'play_card', payload: { cardId: 'diamonds_13' } }],
         ]);
+        checkGameServerAsserts(gameServerMock, {
+            notify: { message: expect.stringContaining('Played') },
+            gameStateUpdate: { turns: expect.objectContaining({ currentPhase: 'draw_phase' }) },
+            reportResult: { success: true }
+        });
 
 
         // now is turn for player 2
@@ -228,6 +222,11 @@ describe('SingleDeckCardGame specs', () => {
             payload: {
                 reason: expect.stringContaining(`Can't perform this action`)
             }
+        });
+        checkGameServerAsserts(gameServerMock, {
+            notify: false,
+            gameStateUpdate: false,
+            reportResult: { success: false }
         });
 
 
@@ -254,6 +253,11 @@ describe('SingleDeckCardGame specs', () => {
             }
         });
         expect(g.toJson().turns.currentPhase).toBe('play_phase');
+        checkGameServerAsserts(gameServerMock, {
+            notify: { message: expect.stringContaining('Drew') },
+            gameStateUpdate: { turns: expect.objectContaining({ currentPhase: 'play_phase' }) },
+            reportResult: { success: true }
+        });
 
         result = g.action(PLAYER_TWO, CARD_GAME_ACTIONS.PLAY_CARD, { cardId: 'diamonds_12' });
         expect(result).toEqual({
@@ -270,8 +274,13 @@ describe('SingleDeckCardGame specs', () => {
                 })
             }
         });
-
         gameState = g.toJson();
+        checkGameServerAsserts(gameServerMock, {
+            notify: { message: expect.stringContaining('Played') },
+            gameStateUpdate: { ...gameState },
+            reportResult: { success: true }
+        });
+
         expect(gameState.turns.order).toEqual([PLAYER_ONE, PLAYER_TWO]);
         expect(gameState.turns.turn).toEqual(1);
         expect(gameState.turns.currentPhase).toBe('draw_phase');
@@ -290,3 +299,34 @@ describe('SingleDeckCardGame specs', () => {
 
 
 });
+
+const checkGameServerAsserts = (gameServerMock, { notify = false, gameStateUpdate = false, reportResult = false }) => {
+    if (!notify) {
+        expect(gameServerMock.notify).not.toHaveBeenCalled();
+    } else {
+        expect(gameServerMock.notify).toHaveBeenCalledWith(expect.objectContaining({
+            ...notify
+        }));
+    }
+
+    if (!gameStateUpdate) {
+        expect(gameServerMock.gameStateUpdate).not.toHaveBeenCalled();
+    } else {
+        expect(gameServerMock.gameStateUpdate).toHaveBeenCalledWith(expect.objectContaining({
+            ...gameStateUpdate
+        }));
+    }
+
+    if (!reportResult) {
+        expect(gameServerMock.reportResult).not.toHaveBeenCalled();
+    } else {
+        expect(gameServerMock.reportResult).toHaveBeenCalledWith(expect.objectContaining({
+            ...reportResult
+        }));
+    }
+
+    gameServerMock.notify.mockClear();
+    gameServerMock.gameStateUpdate.mockClear();
+    gameServerMock.reportResult.mockClear();
+
+};
