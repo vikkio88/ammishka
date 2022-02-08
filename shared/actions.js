@@ -13,6 +13,9 @@ const ROOM_ACTIONS = {
     ADMIN_CMD: 'admin:cmd',
     ADMIN_CMDS: {
         IDENTIFY: 'admin:cmd:identify',
+        SET_GAME: 'admin:cmd:set_game',
+        START_GAME: 'admin:cmd:start_game',
+        END_GAME: 'admin:cmd:end_game',
     },
 
 
