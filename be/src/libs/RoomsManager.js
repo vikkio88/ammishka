@@ -75,7 +75,23 @@ class RoomsManager {
         return result;
     }
 
-    adminCommand(user, roomId, command) {
+    getRoomforPlayerId(roomId, playerId) {
+        if (!this.rooms.has(roomId)) {
+            return a_r(false, { reason: ERRORS.ROOM.NOT_FOUND });
+        }
+
+        /** @type Room */
+        const room = this.rooms.get(roomId);
+
+        if (!room.hasPlayer(playerId)) {
+            return a_r(false, { reason: ERRORS.ROOM.USER_NOT_FOUND });
+        }
+
+        // this is shit
+        return { success: true, room };
+    }
+
+    adminCommand(user, roomId, command, commandPayload) {
         if (!this.rooms.has(roomId)) {
             return a_r(false, { reason: ERRORS.ROOM.NOT_FOUND });
         }
@@ -84,7 +100,7 @@ class RoomsManager {
         const room = this.rooms.get(roomId);
 
 
-        return room.adminCommand(user, command);
+        return room.adminCommand(user, command, commandPayload);
     }
 }
 

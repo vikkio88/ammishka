@@ -1,10 +1,12 @@
-import './styles/GameSetup.css';
-import { CARDS } from 'ammishka-shared/games';
 import { useState } from 'react';
+import { CARDS } from 'ammishka-shared/games';
+import { ROOM_ACTIONS } from 'ammishka-shared/fe';
+import a from '../../store/actions';
+import './styles/GameSetup.css';
 
-const GameSetup = ({ game, isAdmin }) => {
+const GameSetup = ({ game, isAdmin, players, dispatch }) => {
     const hasGame = Boolean(game);
-    const types = Object.values(CARDS.TYPES);
+    const types = Object.values(CARDS.GAMES);
     const [gameType, setGameType] = useState(types[0]);
     return (
         <div className="GameSetup-wrapper">
@@ -12,13 +14,29 @@ const GameSetup = ({ game, isAdmin }) => {
 
             {!hasGame && <h2>No game setup yet</h2>}
             {isAdmin && (
-                <select
-                    onChange={e => setGameType(e.target.value)}
-                    value={gameType}
-                >
-                    {types.map(t => <option key={t} value={t}>{CARDS.LABELS.TYPES[t]}</option>)}
-                </select>
+                <>
+                    <select
+                        onChange={e => setGameType(e.target.value)}
+                        value={gameType}
+                    >
+                        {types.map(t => <option key={t} value={t}>{CARDS.GAMES_CONFIG[t].label}</option>)}
+                    </select>
+
+                    <pre>
+                        {JSON.stringify(players, null, 2)}
+                    </pre>
+
+                    <button
+                        onClick={() => dispatch(a.GAME.ADMIN_CMD, {
+                            command: ROOM_ACTIONS.ADMIN_CMDS.SET_GAME,
+                            payload: { game: gameType, players }
+                        })}
+                    >
+                        SAVE
+                    </button>
+                </>
             )}
+            {(hasGame && !isAdmin) && <h2>{game.name}</h2>}
 
             {/* 
                 set of options like if 

@@ -1,12 +1,15 @@
 const { GameServer, Client, Room } = require('./Server');
 class Game {
+    setName(name) {
+        this.name = name;
+    }
 
     setLogging({ off = false }) {
         this.logging = { off };
     }
 
-    canLog(){
-        return (!Boolean(this.logging) || !this.logging.off)
+    canLog() {
+        return (!Boolean(this.logging) || !this.logging.off);
     }
 
     action(playerId, type, payload = {}) {

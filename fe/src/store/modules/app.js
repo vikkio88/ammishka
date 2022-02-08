@@ -11,6 +11,11 @@ const events = store => ({
     console.log('client:received_message:', msg);
     const me = store.get()?.app?.id;
     console.log('me:', me || null);
+    if (msg.success !== undefined && msg.success === false) {
+      //TODO: make this action to takeover/toast
+      console.error(`ERROR REPORTED ON SERVER`, msg);
+      return;
+    }
 
     const { type, ...payload } = msg?.payload || {};
     switch (type) {
@@ -33,6 +38,17 @@ const events = store => ({
 
       case ROOM_ACTIONS.ADMIN_CMD: {
         store.dispatch(a.GAME.RCV_ADMIN_CMD, payload);
+        return;
+      }
+
+      case ROOM_ACTIONS.GAME_ACTIONS.RESULT: {
+        //store.dispatch(a.GAME.RCV_ADMIN_CMD, payload);
+        console.log(`GAME ACTION RESULT`, payload);
+        return;
+      }
+
+      case ROOM_ACTIONS.STATE_UPDATE: {
+        store.dispatch(a.GAME.STATE_UPDATE, payload);
         return;
       }
 

@@ -1,15 +1,33 @@
 const { ROOM_ACTIONS } = require('ammishka-shared/actions');
 const { ERRORS } = require('ammishka-shared/errors');
 const Game = require('ammishka-shared/games/Game');
+const Deck = require('ammishka-shared/games/cards/Deck');
+const { SingleDeckCardGame } = require('ammishka-shared/games/cards/CardGames');
 const { actionResult: a_r } = require('ammishka-shared/payloads');
 
 const User = require('./User');
+const { CARDS } = require('ammishka-shared/games');
 
 const defaultRoomOptions = {
     /** @type Number */
     maxUsers: 4,
     /** @type Number */
     minUsers: 2,
+
+    /** @type String[] */
+    availableGames: [CARDS.GAMES.BASE_SICILIAN]
+};
+
+const makeGame = (gameName, playersInOrder) => {
+
+    const deck = Deck.makeFromConfig(
+        CARDS.GAMES_CONFIG[CARDS.GAMES.BASE_SICILIAN].DECK.CONFIG
+    );
+
+    const game = new SingleDeckCardGame(deck, playersInOrder);
+    game.setName(gameName); // here I can use label from config
+
+    return game;
 };
 
 
@@ -40,6 +58,10 @@ class Room {
         this.game = game;
     }
 
+    getGame() {
+        return this.game;
+    }
+
     isGameReady() {
         // if no game is set does not matter
         if (!this.game) return true;
@@ -53,6 +75,10 @@ class Room {
 
     isReady() {
         return (this.users.size >= this.options.minUsers) && this.isGameReady();
+    }
+
+    hasPlayer(playerId) {
+        return this.userMap.has(playerId);
     }
 
     join(
@@ -102,6 +128,14 @@ class Room {
         switch (command) {
             case ROOM_ACTIONS.ADMIN_CMDS.IDENTIFY: {
                 return a_r(true, { type, command });
+            }
+            case ROOM_ACTIONS.ADMIN_CMDS.SET_GAME: {
+                if (!this.options.availableGames.includes(payload.game)) {
+                    return a_r(false, { type, command, userId: user.id, reason: ERRORS.ROOM.GAMES.NOT_FOUND });
+                }
+                const game = makeGame(payload.game, payload.players);
+                this.setGame(game);
+                return a_r(true, { type: ROOM_ACTIONS.STATE_UPDATE, room: this.toJson() });
             }
             default: {
                 return a_r(false, { type, command, reason: ERRORS.ROOM.ADMIN_CMD_NOT_FOUND });

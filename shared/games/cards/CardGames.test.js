@@ -10,8 +10,11 @@ describe('SingleDeckCardGame specs', () => {
     it('builds the game correctly', () => {
         const deck = Deck.makeFromConfig(CARDS.DECKS.CONFIG[CARDS.TYPES.FRENCH]);
         let g = new SingleDeckCardGame(deck, PLAYERS);
+        g.setName('someName');
 
         expect(g.toJson()).toEqual({
+            name: 'someName',
+            players: expect.arrayContaining([PLAYER_ONE, PLAYER_TWO]),
             deck: {
                 ...deck.toJson(),
             },
@@ -31,8 +34,10 @@ describe('SingleDeckCardGame specs', () => {
         });
 
         g = new SingleDeckCardGame(deck, [PLAYERS[0]], { minPlayers: 1, maxPlayers: 1 });
-
+        g.setName('someName');
         expect(g.toJson()).toEqual({
+            name: 'someName',
+            players: expect.arrayContaining([PLAYER_ONE]),
             deck: {
                 ...deck.toJson(),
             },

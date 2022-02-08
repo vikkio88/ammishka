@@ -245,6 +245,9 @@ class SingleDeckCardGame extends Game {
 
     toJson() {
         return {
+            name: this.name || 'NO NAME',
+            // maybe add also options
+            players: this.players.map(({ id }) => id),
             phase: this.phases.toJson(),
             deck: this.deck.toJson(),
             turns: this.turnsToJson(),

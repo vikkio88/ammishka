@@ -1,4 +1,6 @@
 const { Client, GameServer, Room } = require('ammishka-shared/games/Server');
+const { EVENTS: e } = require('ammishka-shared/events');
+const { ROOM_ACTIONS } = require('ammishka-shared/actions');
 
 class IoClient extends Client {
     constructor(socket) {
@@ -6,7 +8,8 @@ class IoClient extends Client {
     }
 
     result(result) {
-
+        result.payload.type = ROOM_ACTIONS.GAME_ACTIONS.RESULT;
+        this.socket.emit(e.MESSAGE, result);
     }
 }
 
@@ -16,11 +19,12 @@ class IoRoom extends Room {
     }
 
     broadcast(payload) {
-        console.log('server:broadcasting', payload);
+        this.socket.emit(e.MESSAGE, { payload: { type: ROOM_ACTIONS.GAME_STATE_UPDATE, ...payload } });
     }
 
     notify(payload) {
         console.log('server:notifying', payload);
+        this.socket.emit(e.NOTIFICATION, { message: payload });
     }
 }
 

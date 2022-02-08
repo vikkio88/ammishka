@@ -8,7 +8,15 @@ const ROOM_ACTIONS = {
     LEAVE_ROOM: 'client:leave_room',
     LEFT_ROOM: 'client:left_room',
 
+    STATE_UPDATE: 'server:room_state_udpate',
+    
     ROOM_ACTION: 'client:room_action',
+    
+    GAME_ACTION: 'client:game_action',
+    GAME_ACTIONS: {
+        STATE_UPDATE: 'server:game_state_udpate',
+        RESULT: 'server:client:game_actions:result'
+    },
 
     ADMIN_CMD: 'admin:cmd',
     ADMIN_CMDS: {

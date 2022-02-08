@@ -20,9 +20,9 @@ const game = store => {
         //socket.testAction();
     });
 
-    store.on(a.GAME.ADMIN_CMD, ({ game }, { command }) => {
+    store.on(a.GAME.ADMIN_CMD, ({ game }, { command, payload = {} }) => {
         const { id } = game.room;
-        socket.adminCommand(id, command);
+        socket.adminCommand(id, command, payload);
     });
 
     store.on(a.GAME.RCV_ADMIN_CMD, (_, payload) => {
@@ -66,7 +66,6 @@ const game = store => {
         };
     });
 
-
     store.on(a.GAME.ACTIONS.ROOM_LEFT, ({ app, game }, payload) => {
         const { room } = payload;
 
@@ -80,6 +79,33 @@ const game = store => {
             game: {
                 ...game,
                 room
+            }
+        };
+    });
+
+    store.on(a.GAME.STATE_UPDATE, ({ game }, payload) => {
+        const { room } = payload;
+        return {
+            game: {
+                ...game,
+                room: {
+                    ...room
+                }
+            }
+        };
+    });
+
+    store.on(a.GAME.GAME_STATE_UPDATE, ({ game }, payload) => {
+
+        return {
+            game: {
+                ...game,
+                room: {
+                    ...game.room,
+                    game: {
+                        ...payload
+                    }
+                }
             }
         };
     });

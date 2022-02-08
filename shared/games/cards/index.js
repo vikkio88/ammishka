@@ -62,6 +62,10 @@ const DECK_CONFIG = {
     },
 };
 
+const GAMES = {
+    BASE_SICILIAN: 'base_sicilian_cards',
+};
+
 const CARDS = {
     TYPES: CARD_TYPES,
     LABELS: {
@@ -70,9 +74,11 @@ const CARDS = {
     DECKS: {
         CONFIG: DECK_CONFIG,
     },
-    GAMES: {
-        BASE_SICILIAN: {
+    GAMES,
+    GAMES_CONFIG: {
+        [GAMES.BASE_SICILIAN]: {
             DECK: { CONFIG: DECK_CONFIG[CARD_TYPES.SICILIAN] },
+            label: 'Sicilian cards',
             sharedDeck: true,
             config: {
                 minPlayers: 2,
