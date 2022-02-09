@@ -1,6 +1,37 @@
-.GameSetup-wrapper{
+.GameSetup-wrapper {
     display: flex;
     flex-direction: column;
     padding: 1em;
     align-items: center;
+}
+.GameSetup-wrapper> div.playersSettings {
+    padding: .5em;
+}
+
+.GameSetup-wrapper > h3 {
+    margin: 0;
+}
+ul.GameSetup-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+ul.GameSetup-list li {
+    background-color: #ddd;
+    margin: 1px;
+    padding: .5em;
+    font-size: 16px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+ul.GameSetup-list li > span.orderCommands,
+ul.GameSetup-list li > span.userTypeIcon {
+    margin-right: .5em;
 }

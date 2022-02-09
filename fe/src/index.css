@@ -37,7 +37,7 @@ button {
     font-size: 16px;
 }
 
-button:hover {
+button:enabled:hover {
     background-color: #4c53af;
     border: 2px #000 solid;
     color: white;
@@ -48,7 +48,7 @@ button.accent {
     color: #af4c4c;
 }
 
-button.accent:hover {
+button.accent:enabled:hover {
     background-color: #af4c4c;
     border: 2px #000 solid;
     color: white;
@@ -60,13 +60,13 @@ button.primary {
     color: #4CAF50;
 }
 
-button.primary:hover {
+button.primary:enabled:hover {
     background-color: #4CAF50;
     border: 2px #000 solid;
     color: white;
 }
 
-button:active {
+button:enabled:active {
     box-shadow: 0 2px #666;
     transform: translateY(2px);
 }
@@ -84,7 +84,8 @@ button.x-small {
 }
 
 button:disabled {
-    opacity: .9;
+    opacity: .7;
+    background-color: #ddd;
     cursor: not-allowed;
 }
 
@@ -112,3 +113,7 @@ select {
 
 
 /** UTILITY */
+.small-print {
+    font-size: 12px;
+    text-align: center;
+}

@@ -1,5 +1,6 @@
 import { useStoreon } from 'storeon/react';
 import { CARDS } from 'ammishka-shared/games';
+import { USER_TYPES } from 'ammishka-shared/types';
 import { ROOM_ACTIONS } from 'ammishka-shared/fe';
 import a from '../../store/actions';
 import './styles/GameSetup.css';
@@ -7,8 +8,9 @@ import './styles/GameSetup.css';
 const Turns = ({ isEditable = false, turns, setTurns = () => { } }) => {
     return (
         <>
-            <h3>Turns</h3>
-            <ul>
+            <h3>Player Turns</h3>
+            {turns.length < 1 && <span className='small-print'>None added</span>}
+            <ul className='GameSetup-list'>
                 {turns.map((p, index) => <TurnRow isEditable={isEditable} key={p.id} index={parseInt(index)} player={p} turns={turns} setTurns={setTurns} />)}
             </ul>
         </>
@@ -29,24 +31,36 @@ const TurnRow = ({ isEditable, player, index, turns, setTurns }) => {
     };
     return (
         <li>
-
-            {(isEditable && index !== 0) && <button className='x-small' onClick={() => insert(index - 1)}>⬆️</button>}
-            {(isEditable && index !== total - 1) && <button className='x-small' onClick={() => insert(index + 1)}  >⬇️</button>}
+            {(isEditable && total > 1) && (
+                <span className='orderCommands'>
+                    {(index !== 0) && <button className='x-small' onClick={() => insert(index - 1)}>⬆️</button>}
+                    {(index !== total - 1) && <button className='x-small' onClick={() => insert(index + 1)}  >⬇️</button>}
+                </span>
+            )}
             {name}
         </li>
     );
 };
 
-
+const USER_TYPES_ICONS = {
+    [USER_TYPES.TABLE]: '🖥️',
+};
 const NonPlayers = ({ isEditable, list = [] }) => {
     //isEditable can be used to change type eventually
 
     return (
         <>
             <h3>Other Users</h3>
-            {list.length < 1 && <>None</>}
-            <ul>
-                {list.map(u => <li key={u.id}>{u.name} {u.type}</li>)}
+            {list.length < 1 && <span className='small-print'>None added</span>}
+            <ul className='GameSetup-list'>
+                {list.map(u => (
+                    <li key={u.id}>
+                        {u.name}
+                        <span className='userTypeIcon'>
+                            {USER_TYPES_ICONS[u.type]}
+                        </span>
+                    </li>
+                ))}
             </ul>
         </>
     );
@@ -86,7 +100,7 @@ const GameSetup = () => {
                         {types.map(t => <option key={t} value={t}>{CARDS.GAMES_CONFIG[t].label}</option>)}
                     </select>
 
-                    <div>
+                    <div className='playersSettings'>
                         <Turns isEditable={isAdmin} turns={gameSetup.players} setTurns={players => dispatch(a.GAME_SETUP.SET_PLAYERS, { players })} />
                         <NonPlayers isEditable={isAdmin} list={gameSetup.nonPlayers} />
                     </div>
@@ -102,6 +116,7 @@ const GameSetup = () => {
                         </button>
                         <button
                             // maybe move this to the gameSetup module
+                            disabled={!gameSetup.isDirty}
                             onClick={() => dispatch(a.GAME.ADMIN_CMD, {
                                 command: ROOM_ACTIONS.ADMIN_CMDS.SET_GAME,
                                 payload: { game: gameSetup.type, users: [...gameSetup.players, ...gameSetup.nonPlayers] }
