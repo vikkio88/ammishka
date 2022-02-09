@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build:fe": "cd fe && npm run build",
+    "build:fe": "bash scripts/fe_version_dump.sh && cd fe && npm run build",
     "build:be": "bash scripts/build_be.sh",
     "deploy:be": "bash scripts/deploy_be.sh",
     "deploy:fe": "cd fe && npm run deploy",
