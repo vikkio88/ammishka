@@ -10,8 +10,7 @@ const Room = () => {
     const toggleNav = () => setIsNavHidden(!isNavHidden);
     const navCx = cx({ 'hidden': isNavHidden });
     const showNavBtnCx = cx('tglNavButton', 'outer', !isNavHidden && 'hidden');
-    const { dispatch, game: { room, admin }, app: { id: me } } = useStoreon('game', 'app');
-    const isAdmin = admin;
+    const { dispatch, game: { admin: isAdmin } } = useStoreon('game');
     return (
         <div className="Room-wrapper">
 
@@ -27,7 +26,7 @@ const Room = () => {
             {/* Move nav to its own component */}
 
             <section>
-                <RoomInfo me={me} room={room} isAdmin={isAdmin} dispatch={dispatch} />
+                <RoomInfo />
             </section>
             <footer>
                 <button onClick={() => dispatch(a.GAME.TEST_ACTION)}>TEST ACTION</button>

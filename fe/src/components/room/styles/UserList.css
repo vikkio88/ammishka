@@ -28,6 +28,11 @@ ul.UserList li > span.userIcon {
     margin-right: .5em;
 }
 
+ul.UserList li > span.listCommands {
+    /* margin-left: .5em; */
+    margin-right: .5em;
+}
+
 
 ul.UserList li.userSelf {
     background-color: #ddd;

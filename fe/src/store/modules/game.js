@@ -85,6 +85,19 @@ const game = store => {
 
     store.on(a.GAME.STATE_UPDATE, ({ game }, payload) => {
         const { room } = payload;
+        if (Boolean(room?.game)) {
+            store.dispatch(a.GAME_SETUP.SET, {
+                type: room.game.type,
+                name: room.game.name,
+                players: room.game.players,
+                nonPlayers: room.game.nonPlayers,
+                isDirty: false,
+                isValid: true
+            });
+        } else {
+            store.dispatch(a.GAME_SETUP.SET, null);
+        }
+
         return {
             game: {
                 ...game,

@@ -11,10 +11,16 @@ describe('SingleDeckCardGame specs', () => {
         const deck = Deck.makeFromConfig(CARDS.DECKS.CONFIG[CARDS.TYPES.FRENCH]);
         let g = new SingleDeckCardGame(deck, PLAYERS);
         g.setName('someName');
+        g.setType('someType');
 
         expect(g.toJson()).toEqual({
             name: 'someName',
-            players: expect.arrayContaining([PLAYER_ONE, PLAYER_TWO]),
+            type: 'someType',
+            players: expect.arrayContaining([
+                expect.objectContaining({ id: PLAYER_ONE }),
+                expect.objectContaining({ id: PLAYER_TWO }),
+            ]),
+            nonPlayers: [],
             deck: {
                 ...deck.toJson(),
             },
@@ -35,9 +41,44 @@ describe('SingleDeckCardGame specs', () => {
 
         g = new SingleDeckCardGame(deck, [PLAYERS[0]], { minPlayers: 1, maxPlayers: 1 });
         g.setName('someName');
+        g.setType('someType');
         expect(g.toJson()).toEqual({
             name: 'someName',
-            players: expect.arrayContaining([PLAYER_ONE]),
+            type: 'someType',
+            players: expect.arrayContaining([
+                expect.objectContaining({ id: PLAYER_ONE }),
+            ]),
+            nonPlayers: [],
+            deck: {
+                ...deck.toJson(),
+            },
+            hasStarted: false,
+            isReady: true,
+            phase: expect.objectContaining({
+                current: 'draw_phase',
+            }),
+            turns: {
+                currentPhase: 'draw_phase',
+                currentTurn: [],
+                order: [PLAYER_ONE],
+                baseOrder: [PLAYER_ONE],
+                turn: 0,
+                log: [],
+            }
+        });
+
+        g = new SingleDeckCardGame(deck, [PLAYERS[0], { id: PLAYER_TWO, type: 'something else' }], { minPlayers: 1, maxPlayers: 1 });
+        g.setName('someName');
+        g.setType('someType');
+        expect(g.toJson()).toEqual({
+            name: 'someName',
+            type: 'someType',
+            players: expect.arrayContaining([
+                { id: PLAYER_ONE }
+            ]),
+            nonPlayers: expect.arrayContaining([
+                { id: PLAYER_TWO, type: 'something else' }
+            ]),
             deck: {
                 ...deck.toJson(),
             },
@@ -57,7 +98,7 @@ describe('SingleDeckCardGame specs', () => {
         });
     });
 
-    it('works correctly the actions', () => {
+    it('Game turn test', () => {
         const deck = Deck.makeFromConfig(CARDS.DECKS.CONFIG[CARDS.TYPES.FRENCH]);
         const g = new SingleDeckCardGame(deck, PLAYERS);
         // turning error loggin off
@@ -83,6 +124,18 @@ describe('SingleDeckCardGame specs', () => {
         });
 
         let result = g.action(PLAYER_ONE, CARD_GAME_ACTIONS.DRAW);
+        expect(result).toEqual({
+            success: false,
+            payload: {
+                reason: expect.stringContaining(`hasn't started`)
+            }
+        });
+
+        // starting the game
+        g.start();
+        expect(g.toJson().hasStarted).toBe(true);
+
+        result = g.action(PLAYER_ONE, CARD_GAME_ACTIONS.DRAW);
         expect(result).toEqual({
             success: true,
             payload: {

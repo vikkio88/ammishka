@@ -1,4 +1,5 @@
 const { actionResult: a_r } = require('../../payloads');
+const { USER_TYPES } = require('../../types');
 
 const Game = require('../Game');
 const Deck = require('./Deck');
@@ -62,14 +63,17 @@ class SingleDeckCardGame extends Game {
     constructor(
         /** @type Deck */
         startingDeck,
-        playersInOrder = [],
+        users = [],
         config = {}
     ) {
         super();
 
         this.deck = startingDeck;
+        const playersInOrder = users.filter(u => (!Boolean(u.type) || u.type === USER_TYPES.PLAYER));
+        const otherUsers = users.filter(u => !playersInOrder.includes(u));
         if (playersInOrder.length < 1) throw Error('Not Enough players');
         this.players = playersInOrder;
+        this.nonPlayers = otherUsers;
         this.config = { ...defaultConfig, ...config };
 
 
@@ -102,10 +106,17 @@ class SingleDeckCardGame extends Game {
         this.hands = hands;
         this.order = order;
 
+
+        this.hasStarted = false;
     }
 
-    checkTurn(playerId) {
-        return this.turns.order[0] === playerId;
+
+    setType(type) {
+        this.type = type;
+    }
+
+    start() {
+        return this.hasStarted = true;
     }
 
     reportError({ playerId, type, problem, }, reason) {
@@ -120,6 +131,13 @@ class SingleDeckCardGame extends Game {
             return this.reportError(
                 { playerId, type, problem: 'game was not ready' },
                 `Game is not Ready`
+            );
+        }
+
+        if (!this.hasStarted) {
+            return this.reportError(
+                { playerId, type, problem: 'game was not started' },
+                `Game hasn't started`
             );
         }
 
@@ -224,10 +242,6 @@ class SingleDeckCardGame extends Game {
         return result;
     }
 
-    hasStarted() {
-        return this.turns.turn > 0;
-    }
-
     isReady() {
         const cPlayers = this.players.length;
         const { minPlayers, maxPlayers } = this.config;
@@ -246,12 +260,14 @@ class SingleDeckCardGame extends Game {
     toJson() {
         return {
             name: this.name || 'NO NAME',
+            type: this.type || 'NO TYPE',
             // maybe add also options
-            players: this.players.map(({ id }) => id),
+            players: this.players,
+            nonPlayers: this.nonPlayers,
             phase: this.phases.toJson(),
             deck: this.deck.toJson(),
             turns: this.turnsToJson(),
-            hasStarted: this.hasStarted(),
+            hasStarted: this.hasStarted,
             isReady: this.isReady(),
         };
     }

@@ -25,8 +25,8 @@ const makeGame = (gameName, playersInOrder) => {
     );
 
     const game = new SingleDeckCardGame(deck, playersInOrder);
+    game.setType(gameName);
     game.setName(gameName); // here I can use label from config
-
     return game;
 };
 
@@ -130,10 +130,15 @@ class Room {
                 return a_r(true, { type, command });
             }
             case ROOM_ACTIONS.ADMIN_CMDS.SET_GAME: {
+                if (payload.game === null) {
+                    this.setGame(null);
+                    return a_r(true, { type: ROOM_ACTIONS.STATE_UPDATE, room: this.toJson() });
+                }
+                
                 if (!this.options.availableGames.includes(payload.game)) {
                     return a_r(false, { type, command, userId: user.id, reason: ERRORS.ROOM.GAMES.NOT_FOUND });
                 }
-                const game = makeGame(payload.game, payload.players);
+                const game = makeGame(payload.game, payload.users);
                 this.setGame(game);
                 return a_r(true, { type: ROOM_ACTIONS.STATE_UPDATE, room: this.toJson() });
             }

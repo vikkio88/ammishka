@@ -37,6 +37,14 @@ const ACTIONS = {
         }
     },
 
+    GAME_SETUP: {
+        SET: 'game_setup:set',
+        REMOVE_USER: 'game_setup:remove_user',
+        ADD_PLAYER: 'game_setup:add_player',
+        SET_PLAYERS: 'game_setup:set_players',
+        ADD_NON_PLAYER: 'game_setup:add_non_player',
+    },
+
     MISC: {
         IDENTIFY: 'misc:identify',
     }
