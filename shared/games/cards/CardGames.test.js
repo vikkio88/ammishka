@@ -1,4 +1,5 @@
 const { CARDS } = require('.');
+const { USER_TYPES } = require('../../types');
 const { SingleDeckCardGame, CARD_GAME_ACTIONS } = require('./CardGames');
 const Deck = require('./Deck');
 
@@ -100,7 +101,7 @@ describe('SingleDeckCardGame specs', () => {
 
     it('Game turn test', () => {
         const deck = Deck.makeFromConfig(CARDS.DECKS.CONFIG[CARDS.TYPES.FRENCH]);
-        const g = new SingleDeckCardGame(deck, PLAYERS);
+        const g = new SingleDeckCardGame(deck, [...PLAYERS, { id: 'theTable', type: USER_TYPES.TABLE }]);
         // turning error loggin off
         g.setLogging({ off: true });
         // so I dont get annoying output
@@ -110,6 +111,12 @@ describe('SingleDeckCardGame specs', () => {
             notify: jest.fn()
         };
         g.setServer(gameServerMock);
+
+        expect(g.toJson().nonPlayers).toEqual(expect.arrayContaining([
+            expect.objectContaining({
+                id: 'theTable', type: USER_TYPES.TABLE
+            })
+        ]));
 
         expect(g.toJson().turns.currentPhase).toBe('draw_phase');
         expect(g.toJson().phase).toEqual({
