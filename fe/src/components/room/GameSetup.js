@@ -125,6 +125,17 @@ const GameSetup = () => {
                             SAVE
                         </button>
                     </div>
+                    <div>
+                        <button
+                            // maybe move this to the gameSetup module
+                            disabled={!room.isReady}
+                            onClick={() => dispatch(a.GAME.ADMIN_CMD, {
+                                command: ROOM_ACTIONS.ADMIN_CMDS.START_GAME
+                            })}
+                        >
+                            START
+                        </button>
+                    </div>
                 </>
             )}
 

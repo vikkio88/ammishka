@@ -134,12 +134,19 @@ class Room {
                     this.setGame(null);
                     return a_r(true, { type: ROOM_ACTIONS.STATE_UPDATE, room: this.toJson() });
                 }
-                
+
                 if (!this.options.availableGames.includes(payload.game)) {
                     return a_r(false, { type, command, userId: user.id, reason: ERRORS.ROOM.GAMES.NOT_FOUND });
                 }
                 const game = makeGame(payload.game, payload.users);
                 this.setGame(game);
+                return a_r(true, { type: ROOM_ACTIONS.STATE_UPDATE, room: this.toJson() });
+            }
+            case ROOM_ACTIONS.ADMIN_CMDS.START_GAME: {
+                if (!Boolean(this.game)) {
+                    return a_r(false, { type, command, userId: user.id, reason: ERRORS.ROOM.GAMES.NOT_FOUND });
+                }
+                this.game.start();
                 return a_r(true, { type: ROOM_ACTIONS.STATE_UPDATE, room: this.toJson() });
             }
             default: {
