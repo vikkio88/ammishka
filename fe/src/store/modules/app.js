@@ -1,76 +1,9 @@
-import { EVENTS, ROOM_ACTIONS } from 'ammishka-shared/fe';
+
 import { ammuzzu } from 'ammishka-shared/libs/ammuzzu';
 import socket from '../../libs/socket';
 import { TAKEOVER_TYPES } from '../../enums';
 import a from '../actions';
-
-// @TODO: move this somewhere else
-const events = store => ({
-  // @TODO: use this to forward to single action
-  [EVENTS.MESSAGE]: msg => {
-    console.log('client:received_message:', msg);
-    const me = store.get()?.app?.id;
-    console.log('me:', me || null);
-    if (msg.success !== undefined && msg.success === false) {
-      //TODO: make this action to takeover/toast
-      console.error(`ERROR REPORTED ON SERVER`, msg);
-      return;
-    }
-
-    const { type, ...payload } = msg?.payload || {};
-    switch (type) {
-      case ROOM_ACTIONS.CREATED_ROOM: {
-        store.dispatch(a.GAME.ACTIONS.ROOM_CREATED, payload);
-        store.dispatch(a.APP.LOADING_STOP);
-        return;
-      }
-      case ROOM_ACTIONS.JOINED_ROOM: {
-        store.dispatch(a.GAME.ACTIONS.ROOM_JOINED, payload);
-        store.dispatch(a.APP.LOADING_STOP);
-        return;
-      }
-      case ROOM_ACTIONS.LEFT_ROOM: {
-        store.dispatch(a.GAME.ACTIONS.ROOM_LEFT, payload);
-        const newAppState = payload.userId === me ? { ...INITIAL_APP_STATE.app } : {};
-        store.dispatch(a.APP.LOADING_STOP, newAppState);
-        return;
-      }
-
-      case ROOM_ACTIONS.ADMIN_CMD: {
-        store.dispatch(a.GAME.RCV_ADMIN_CMD, payload);
-        return;
-      }
-
-      case ROOM_ACTIONS.GAME_ACTIONS.RESULT: {
-        //store.dispatch(a.GAME.RCV_ADMIN_CMD, payload);
-        console.log(`GAME ACTION RESULT`, payload);
-        return;
-      }
-
-      case ROOM_ACTIONS.STATE_UPDATE: {
-        store.dispatch(a.GAME.STATE_UPDATE, payload);
-        return;
-      }
-
-      case ROOM_ACTIONS.TEST: {
-        console.log('test msg received', { type, payload });
-        return;
-      }
-
-      default: {
-        console.error('error: unknown message format', msg);
-        return;
-      }
-
-    }
-  },
-  [EVENTS.NOTIFICATION]: msg => {
-    console.log('NOTIFICATION RECEIVED', msg);
-    // todo: check standard notification message
-    const { message } = msg;
-    store.dispatch(a.UI.NOTIFICATION.SHOW, { message });
-  }
-});
+import { makeEventHandler } from '../socketEventsHandler';
 
 const INITIAL_APP_STATE = {
   app: {
@@ -89,7 +22,7 @@ const app = store => {
 
   store.on(a.APP.CREATE, async () => {
     store.dispatch(a.APP.LOADING_START);
-    await socket.init(events(store));
+    await socket.init(makeEventHandler(store));
     await socket.createRoom();
     // here we are not loadingStop as waiting for the room to be created
     store.dispatch(a.APP.MERGE_STATE, { id: socket.id, isConnected: true });
@@ -98,7 +31,7 @@ const app = store => {
 
   store.on(a.APP.JOIN, async ({ app }, { roomId }) => {
     store.dispatch(a.APP.LOADING_START);
-    await socket.init(events(store));
+    await socket.init(makeEventHandler(store));
     await socket.joinRoom(roomId);
     store.dispatch(a.APP.MERGE_STATE, { id: socket.id, isConnected: true });
 
