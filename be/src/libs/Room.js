@@ -63,9 +63,7 @@ class Room {
     }
 
     isGameReady() {
-        // if no game is set does not matter
-        if (!this.game) return true;
-
+        if (!this.game) return false;
         return this.game.isReady();
     }
 
