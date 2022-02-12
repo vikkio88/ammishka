@@ -27,9 +27,11 @@ describe('SingleDeckCardGame specs', () => {
             },
             hasStarted: false,
             isReady: true,
+            isFinished: false,
             phase: expect.objectContaining({
                 current: 'draw_phase',
             }),
+            availableActions: ['draw'],
             turns: {
                 currentPhase: 'draw_phase',
                 currentTurn: [],
@@ -37,7 +39,8 @@ describe('SingleDeckCardGame specs', () => {
                 baseOrder: [PLAYER_ONE, PLAYER_TWO],
                 turn: 0,
                 log: [],
-            }
+            },
+            score: null,
         });
 
         g = new SingleDeckCardGame(deck, [PLAYERS[0]], { minPlayers: 1, maxPlayers: 1 });
@@ -55,9 +58,11 @@ describe('SingleDeckCardGame specs', () => {
             },
             hasStarted: false,
             isReady: true,
+            isFinished: false,
             phase: expect.objectContaining({
                 current: 'draw_phase',
             }),
+            availableActions: ['draw'],
             turns: {
                 currentPhase: 'draw_phase',
                 currentTurn: [],
@@ -65,7 +70,8 @@ describe('SingleDeckCardGame specs', () => {
                 baseOrder: [PLAYER_ONE],
                 turn: 0,
                 log: [],
-            }
+            },
+            score: null,
         });
 
         g = new SingleDeckCardGame(deck, [PLAYERS[0], { id: PLAYER_TWO, type: 'something else' }], { minPlayers: 1, maxPlayers: 1 });
@@ -85,9 +91,11 @@ describe('SingleDeckCardGame specs', () => {
             },
             hasStarted: false,
             isReady: true,
+            isFinished: false,
             phase: expect.objectContaining({
                 current: 'draw_phase',
             }),
+            availableActions: ['draw'],
             turns: {
                 currentPhase: 'draw_phase',
                 currentTurn: [],
@@ -95,13 +103,14 @@ describe('SingleDeckCardGame specs', () => {
                 baseOrder: [PLAYER_ONE],
                 turn: 0,
                 log: [],
-            }
+            },
+            score: null,
         });
     });
 
     it('Game turn test', () => {
         const deck = Deck.makeFromConfig(CARDS.DECKS.CONFIG[CARDS.TYPES.FRENCH]);
-        const g = new SingleDeckCardGame(deck, [...PLAYERS, { id: 'theTable', type: USER_TYPES.TABLE }]);
+        const g = new SingleDeckCardGame(deck, [...PLAYERS, { id: 'theTable', type: USER_TYPES.BOARD }]);
         // turning error loggin off
         g.setLogging({ off: true });
         // so I dont get annoying output
@@ -114,7 +123,7 @@ describe('SingleDeckCardGame specs', () => {
 
         expect(g.toJson().nonPlayers).toEqual(expect.arrayContaining([
             expect.objectContaining({
-                id: 'theTable', type: USER_TYPES.TABLE
+                id: 'theTable', type: USER_TYPES.BOARD
             })
         ]));
 

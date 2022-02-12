@@ -6,9 +6,11 @@ const ROOM_ID = 'someRoomId';
 const ADMIN_ID = 'someAdminId';
 
 const userSocketMock = (id) => new User(id);
-const getMockedRoom = ({ options = {} } = {}) => {
+const getMockedRoom = ({ options = {}, game = null } = {}) => {
     const user = userSocketMock(ADMIN_ID);
-    return new Room(ROOM_ID, user, options);
+    const room = new Room(ROOM_ID, user, options);
+    room.setGame(game);
+    return room;
 };
 
 describe('Room specs', () => {
@@ -49,6 +51,8 @@ describe('Room specs', () => {
 
     it('shows correctly when the room is ready', () => {
         let room = getMockedRoom({ options: { minUsers: 1 } });
+        expect(room.isReady()).toBe(false);
+        room.setGame({ isReady() { return true; } });
         expect(room.isReady()).toBe(true);
         room = getMockedRoom({ options: { minUsers: 5 } });
         expect(room.isReady()).toBe(false);

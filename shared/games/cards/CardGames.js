@@ -108,6 +108,10 @@ class SingleDeckCardGame extends Game {
 
 
         this.hasStarted = false;
+        this.isFinished = false;
+        this.score = null;
+
+        this.board = null;
     }
 
 
@@ -195,16 +199,7 @@ class SingleDeckCardGame extends Game {
                 break;
             }
             case ACTIONS.PLAY_CARD: {
-                // maybe check if player has card
-                const hand = this.hands.get(playerId);
-
-                const card = hand.get(payload.cardId);
-                // here you play the card
-
-                result = a_r(true, {
-                    playedCard: card.toJson(),
-                    hand: hand.toJson()
-                });
+                result = this.play(playerId, payload);
                 break;
             }
             default: {
@@ -212,8 +207,6 @@ class SingleDeckCardGame extends Game {
                 break;
             }
         }
-
-
 
         this.turns.currentTurn.push([playerId, { type, payload }]);
 
@@ -225,6 +218,7 @@ class SingleDeckCardGame extends Game {
         }
         //if action happened successfully && endTurn
         if (endTurn) {
+            this.calculateScore();
             this.phases.reset();
             this.turns.order.shift();
             if (this.turns.order.length === 0) {
@@ -248,6 +242,20 @@ class SingleDeckCardGame extends Game {
         return cPlayers >= minPlayers && cPlayers <= maxPlayers;
     }
 
+    play(playerId, payload = {}) {
+        const hand = this.hands.get(playerId);
+        const card = hand.get(payload.cardId);
+
+        return a_r(true, {
+            playedCard: card.toJson(),
+            hand: hand.toJson()
+        });
+    }
+
+    calculateScore() {
+        this.score = null;
+    }
+
     // might move turns to 
     // its own class
     turnsToJson() {
@@ -265,10 +273,13 @@ class SingleDeckCardGame extends Game {
             players: this.players,
             nonPlayers: this.nonPlayers,
             phase: this.phases.toJson(),
+            availableActions: this.phases.getActionsInCurrent(),
             deck: this.deck.toJson(),
             turns: this.turnsToJson(),
             hasStarted: this.hasStarted,
+            isFinished: this.isFinished,
             isReady: this.isReady(),
+            score: this.score,
         };
     }
 }

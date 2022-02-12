@@ -1,7 +1,7 @@
 const USER_TYPES = {
     PLAYER: 'player',
     SPECTATOR: 'spectator',
-    TABLE: 'table',
+    BOARD: 'board',
 };
 
 

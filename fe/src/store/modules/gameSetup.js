@@ -47,8 +47,8 @@ const gameSetup = store => {
     });
 
     store.on(a.GAME_SETUP.ADD_NON_PLAYER, ({ gameSetup }, { nonPlayer, type } = {}) => {
-        // atm the only non player is TABLE
-        nonPlayer.type = USER_TYPES.TABLE;
+        // atm the only non player is BOARD
+        nonPlayer.type = USER_TYPES.BOARD;
 
         const newNonPlayers = [...gameSetup.nonPlayers, nonPlayer];
         // validate
