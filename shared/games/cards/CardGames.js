@@ -127,6 +127,10 @@ class SingleDeckCardGame extends Game {
         this.type = type;
     }
 
+    setBoard(board) {
+        this.board = board;
+    }
+
     start() {
         return this.hasStarted = true;
     }
@@ -298,6 +302,7 @@ class SingleDeckCardGame extends Game {
             isFinished: this.isFinished,
             isReady: this.isReady(),
             score: this.score,
+            board: this.board,
         };
     }
 }

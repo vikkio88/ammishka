@@ -41,6 +41,7 @@ describe('SingleDeckCardGame specs', () => {
                 log: [],
             },
             score: null,
+            board: null,
         });
 
         g = new SingleDeckCardGame(deck, [PLAYERS[0]], { minPlayers: 1, maxPlayers: 1 });
@@ -72,6 +73,7 @@ describe('SingleDeckCardGame specs', () => {
                 log: [],
             },
             score: null,
+            board: null,
         });
 
         g = new SingleDeckCardGame(deck, [PLAYERS[0], { id: PLAYER_TWO, type: 'something else' }], { minPlayers: 1, maxPlayers: 1 });
@@ -105,6 +107,7 @@ describe('SingleDeckCardGame specs', () => {
                 log: [],
             },
             score: null,
+            board: null,
         });
     });
 
