@@ -1,6 +1,6 @@
 const { CARDS } = require('.');
 const { USER_TYPES } = require('../../types');
-const { SingleDeckCardGame, CARD_GAME_ACTIONS } = require('./CardGames');
+const { SingleDeckCardGame, ACTIONS_CONFIG: { actions: CARD_GAME_ACTIONS } } = require('./CardGames');
 const Deck = require('./Deck');
 
 const PLAYER_ONE = 'idPlayer1';

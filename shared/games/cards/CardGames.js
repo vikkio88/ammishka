@@ -48,6 +48,13 @@ const PHASES_ACTIONS = {
     [PHASES.PLAY]: [ACTIONS.PLAY_CARD],
 };
 
+const ACTIONS_CONFIG = {
+    actions: ACTIONS,
+    labels: ACTIONS_LABELS,
+    conditions: ACTIONS_CONDITIONS,
+    effects: ACTIONS_EFFECTS
+};
+
 
 const defaultConfig = {
     minPlayers: 2, maxPlayers: 2,
@@ -55,6 +62,7 @@ const defaultConfig = {
     phasesActions: PHASES_ACTIONS,
     indipendentActions: [ACTIONS.LOOK_AT_OWN_HAND, ACTIONS.SHOW_HAND],
     initialSetup: ({ deck, players, hands, order }) => ({ deck, players, hands, order }),
+    actions: { ...ACTIONS_CONFIG }
 };
 
 
@@ -130,6 +138,10 @@ class SingleDeckCardGame extends Game {
         return result;
     }
 
+    getActionsConfig() {
+        return this.config.actions;
+    }
+
     action(playerId, type, payload = {}) {
         if (!this.isReady()) {
             return this.reportError(
@@ -145,7 +157,9 @@ class SingleDeckCardGame extends Game {
             );
         }
 
-        if (!Object.values(ACTIONS).includes(type)) {
+        const ac = this.getActionsConfig();
+
+        if (!Object.values(ac.actions).includes(type)) {
             return this.reportError(
                 { playerId, type, problem: 'tried not an existing action' },
                 `Not an existing action`
@@ -165,7 +179,7 @@ class SingleDeckCardGame extends Game {
         }
 
 
-        if (!ACTIONS_CONDITIONS[type]({
+        if (!ac.conditions[type]({
             turns: this.turns,
             hands: this.hands,
             playerId,
@@ -178,35 +192,7 @@ class SingleDeckCardGame extends Game {
             );
         }
 
-        let result = null;
-
-        // make action
-        switch (type) {
-            case ACTIONS.DRAW: {
-                const card = this.deck.draw();
-                const hand = this.hands.get(playerId);
-                hand.add(card);
-                result = a_r(true, { hand: hand.toJson(), drawnCard: card.toJson() });
-                break;
-            }
-            case ACTIONS.LOOK_AT_OWN_HAND: {
-                const hand = this.hands.get(playerId);
-                result = a_r(true, { hand: hand.toJson() });
-                break;
-            }
-            case ACTIONS.END_PHASE: {
-                result = a_r(true, { phases: { current: this.phases.current(), next: this.phases.next() } });
-                break;
-            }
-            case ACTIONS.PLAY_CARD: {
-                result = this.play(playerId, payload);
-                break;
-            }
-            default: {
-                result = a_r(false, { reason: 'This should never happen' });
-                break;
-            }
-        }
+        let result = this.actionHandler(playerId, type, payload);
 
         this.turns.currentTurn.push([playerId, { type, payload }]);
 
@@ -233,6 +219,38 @@ class SingleDeckCardGame extends Game {
         this.getServer().notify({ playerId, message: `${ACTIONS_LABELS[type]}` });
         this.getServer().gameStateUpdate(this.toJson());
         this.getServer().reportResult(result);
+        return result;
+    }
+
+    actionHandler(playerId, action, payload) {
+        let result = null;
+        switch (action) {
+            case ACTIONS.DRAW: {
+                const card = this.deck.draw();
+                const hand = this.hands.get(playerId);
+                hand.add(card);
+                result = a_r(true, { hand: hand.toJson(), drawnCard: card.toJson() });
+                break;
+            }
+            case ACTIONS.LOOK_AT_OWN_HAND: {
+                const hand = this.hands.get(playerId);
+                result = a_r(true, { hand: hand.toJson() });
+                break;
+            }
+            case ACTIONS.END_PHASE: {
+                result = a_r(true, { phases: { current: this.phases.current(), next: this.phases.next() } });
+                break;
+            }
+            case ACTIONS.PLAY_CARD: {
+                result = this.play(playerId, payload);
+                break;
+            }
+            default: {
+                result = a_r(false, { reason: 'This should never happen' });
+                break;
+            }
+        }
+
         return result;
     }
 
@@ -286,5 +304,5 @@ class SingleDeckCardGame extends Game {
 
 module.exports = {
     SingleDeckCardGame,
-    CARD_GAME_ACTIONS: ACTIONS
+    ACTIONS_CONFIG
 };
