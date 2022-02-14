@@ -97,6 +97,15 @@ describe('Board specs', () => {
                     facing: 'up'
                 })
             );
+            
+            result = b.flip(SOME_PLAYER_ID, 0);
+            expect(result).toBe(true);
+
+            expect(b.toJson().cards[0]).toEqual(
+                expect.objectContaining({
+                    facing: 'down'
+                })
+            );
         });
 
     });
