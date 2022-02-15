@@ -67,10 +67,39 @@ class PositionalBoard extends Board {
             cards,
         };
     }
+}
 
+
+const defaultSlotsConfiguration = {
+    slots: {}
+};
+class SlotsBoard extends PositionalBoard {
+    constructor(config = {}) {
+        super();
+        config = { ...defaultSlotsConfiguration, ...config };
+        this.slots = config.slots;
+        this.cards = [];
+    }
+
+    place(card, playerId, position, facing = CARD_FACING.UP) {
+        // need to handle duplicates if double decks too
+        // if this.has card then change id adding player or maybe a random id
+        // TODO
+        this.board.set(card.id, { card, playerId, facing, position });
+        this.cards.push(card.id);
+    }
+
+    toJson() {
+        const board = super.toJson();
+        return {
+            ...board,
+            slots: this.slots
+        };
+    }
 }
 
 module.exports = {
     PositionalBoard,
+    SlotsBoard,
     CARD_FACING
 };
