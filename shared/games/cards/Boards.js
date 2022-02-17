@@ -1,4 +1,5 @@
 const Board = require('../Board');
+const Card = require('./Card');
 const CARD_FACING = {
     UP: 'up',
     DOWN: 'down'
@@ -10,18 +11,50 @@ const PILES = {
     PLAYERS: 'players_piles',
     PLAYER: 'player_piles',
 };
+
+// Does not handle duplicates
 class PositionalBoard extends Board {
     constructor(players = []) {
         super();
         this.board = new Map();
         this.cards = [];
+
         this.piles = {
             [PILES.COMMON_DISCARD]: [],
-            [PILES.PLAYERS]: players.map(({id})=> ({
-                [PILES.PLAYER]:[], 
-                [PILES.DISCARD]: []
-            })),
         };
+
+        if (players.length > 0) this.piles[PILES.PLAYERS] = {};
+
+        for (const player of players) {
+            this.piles[PILES.PLAYERS][player.id] = {
+                [PILES.PLAYER]: [],
+                [PILES.DISCARD]: [],
+            };
+        }
+
+    }
+
+    discard(card, playerId = null) {
+        // this is crap but is ok
+        card = Card.fromJson(card);
+        if (playerId) {
+            this.addToPlayerPile(playerId, card, PILES.DISCARD);
+            return;
+        }
+
+        this.addToPile(PILES.COMMON_DISCARD, card);
+    }
+
+    addToPile(pile, card) {
+        // this is crap but is ok
+        card = Card.fromJson(card);
+        this.piles[pile].push(card);
+    }
+
+    addToPlayerPile(playerId, card, pile = PILES.PLAYER) {
+        // this is crap but is ok
+        card = Card.fromJson(card);
+        this.piles[PILES.PLAYERS][playerId][pile].push(card);
     }
 
     place(card, playerId, position = [0, 0], facing = CARD_FACING.UP) {
@@ -34,6 +67,10 @@ class PositionalBoard extends Board {
 
     has(cardId) {
         return this.board.has(cardId);
+    }
+
+    hasIndex(cardIndex) {
+        return Boolean(this.cards[cardIndex]);
     }
 
     // a player can peek only his own card
@@ -62,12 +99,38 @@ class PositionalBoard extends Board {
         return false;
     }
 
-    take(cardId) {
-        const index = this.board.get(cardId);
+    take(cardIndex, flip = true) {
+        if (!this.hasIndex(cardIndex)) return false;
 
+        const cardId = this.cards[cardIndex];
+        const cc = this.board.get(cardId);
+        this.cards = this.cards.filter(id => id !== cardId);
+
+        // think about doing a TAKE but with flipped card, maybe add to pile 
+        return flip ? cc.card.toJson() : null;
     }
 
-    toJson() {
+    cleanUp() {
+        return [];
+    }
+
+    pilesToJson() {
+        const piles = { [PILES.COMMON_DISCARD]: this.piles[PILES.COMMON_DISCARD].map(c => c.toJson()) };
+
+        if (Boolean(this.piles[PILES.PLAYERS])) {
+            piles[PILES.PLAYERS] = {};
+            for (const playerId of Object.keys(this.piles[PILES.PLAYERS])) {
+                piles[PILES.PLAYERS][playerId] = {
+                    [PILES.PLAYER]: this.piles[PILES.PLAYERS][playerId][PILES.PLAYER].map(c => c.toJson()),
+                    [PILES.DISCARD]: this.piles[PILES.PLAYERS][playerId][PILES.DISCARD].map(c => c.toJson()),
+                };
+
+            }
+        }
+        return piles;
+    }
+
+    boardCardsToJson() {
         const cards = [];
         for (const id of this.cards) {
             const { playerId, facing, position, card } = this.board.get(id);
@@ -77,8 +140,18 @@ class PositionalBoard extends Board {
                 position, facing
             });
         }
+
+        return cards;
+    }
+
+
+
+    toJson() {
+        const cards = this.boardCardsToJson();
+        const piles = this.pilesToJson();
         return {
             cards,
+            piles
         };
     }
 }
@@ -143,5 +216,6 @@ class SlotsBoard extends PositionalBoard {
 module.exports = {
     PositionalBoard,
     SlotsBoard,
-    CARD_FACING
+    CARD_FACING,
+    PILES
 };

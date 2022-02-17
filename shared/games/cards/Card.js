@@ -5,6 +5,12 @@ class Card {
         this.seed = seed;
     }
 
+    static fromJson(card) {
+        if (card instanceof Card) return card;
+        
+        return new Card(card.value, card.seed, card.id);
+    }
+
     toJson() {
         return {
             id: this.id,

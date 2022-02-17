@@ -22,6 +22,24 @@ describe('Card specs', () => {
             ownerId: null,
             cards: []
         });
+        const card = getCard();
+        hand.add(card);
+        expect(hand.toJson()).toEqual({
+            ownerId: null,
+            cards: [{ ...card.toJson() }]
+        });
+        hand.get(card.id);
+        expect(hand.toJson()).toEqual({
+            ownerId: null,
+            cards: []
+        });
+
+        const cardJs = card.toJson();
+        hand.add(cardJs);
+        expect(hand.toJson()).toEqual({
+            ownerId: null,
+            cards: [{ ...card.toJson() }]
+        });
     });
 
     // todo

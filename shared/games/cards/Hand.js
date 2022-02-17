@@ -1,6 +1,8 @@
 const Card = require('./Card');
 
 const defaultConfig = { minCards: 0, maxCards: 3 };
+
+// does not handle well duplicates cards
 class Hand {
     constructor(
         ownerId = null,
@@ -20,12 +22,13 @@ class Hand {
     add(card) {
         // make sure you check if sometimes you
         // have duplicates
+        card = card instanceof Card ? card : Card.fromJson(card);
         this.cardsMap.set(card.id, card);
     }
 
     get(cardId) {
         if (!this.has(cardId)) return null;
-        
+
         const card = this.cardsMap.get(cardId);
         this.cardsMap.delete(cardId);
         return card;
