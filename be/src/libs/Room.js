@@ -26,7 +26,7 @@ const makeGame = (gameName, playersInOrder) => {
 
     const game = new SingleDeckCardGame(deck, playersInOrder);
     game.setType(gameName);
-    game.setName(gameName); // here I can use label from config
+    game.setName(CARDS.GAMES_CONFIG[CARDS.GAMES.BASE_SICILIAN].label);
     return game;
 };
 
@@ -146,6 +146,13 @@ class Room {
                 }
                 this.game.start();
                 return a_r(true, { type: ROOM_ACTIONS.STATE_UPDATE, room: this.toJson() });
+            }
+            case ROOM_ACTIONS.ADMIN_CMDS.STOP_GAME: {
+                if (!Boolean(this.game)) {
+                    return a_r(false, { type, command, userId: user.id, reason: ERRORS.ROOM.GAMES.NOT_FOUND });
+                }
+                this.game.stop();
+                return a_r(true, { type: ROOM_ACTIONS.GAME_ACTIONS.STATE_UPDATE, game: room.getGame().toJson() });
             }
             default: {
                 return a_r(false, { type, command, reason: ERRORS.ROOM.ADMIN_CMD_NOT_FOUND });

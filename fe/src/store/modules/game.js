@@ -5,6 +5,8 @@ import a from '../actions';
 const INITIAL_APP_STATE = {
     game: {
         room: null,
+        // maybe this here to store secret pieces of state
+        secret: null,
         admin: false
     },
 };

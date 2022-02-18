@@ -23,7 +23,7 @@ const ROOM_ACTIONS = {
         IDENTIFY: 'admin:cmd:identify',
         SET_GAME: 'admin:cmd:set_game',
         START_GAME: 'admin:cmd:start_game',
-        END_GAME: 'admin:cmd:end_game',
+        STOP_GAME: 'admin:cmd:stop_game',
     },
 
 
