@@ -372,6 +372,16 @@ describe('SingleDeckCardGame specs', () => {
             ]
         ]);
 
+        g.stop();
+        expect(g.isFinished).toBe(true);
+
+        result = g.action(PLAYER_ONE, CARD_GAME_ACTIONS.DRAW);
+        expect(result).toEqual({
+            success: false,
+            payload: {
+                reason: expect.stringContaining(`is finished`)
+            }
+        });
     });
 
 

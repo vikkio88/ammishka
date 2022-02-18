@@ -135,6 +135,10 @@ class SingleDeckCardGame extends Game {
         return this.hasStarted = true;
     }
 
+    stop() {
+        return this.isFinished = true;
+    }
+
     reportError({ playerId, type, problem, }, reason) {
         this.canLog() && console.error(`${playerId}: (action ${type}), ${problem}`);
         const result = a_r(false, { reason });
@@ -160,6 +164,14 @@ class SingleDeckCardGame extends Game {
                 `Game hasn't started`
             );
         }
+
+        if (this.isFinished) {
+            return this.reportError(
+                { playerId, type, problem: 'game is finished' },
+                `Game is finished`
+            );
+        }
+
 
         const ac = this.getActionsConfig();
 
