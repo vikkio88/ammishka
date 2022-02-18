@@ -16,6 +16,11 @@ const PILES = {
 class PositionalBoard extends Board {
     constructor(players = []) {
         super();
+        this.setup(players.map(({ id }) => id));
+
+    }
+
+    setup(playerIds) {
         this.board = new Map();
         this.cards = [];
 
@@ -23,15 +28,14 @@ class PositionalBoard extends Board {
             [PILES.COMMON_DISCARD]: [],
         };
 
-        if (players.length > 0) this.piles[PILES.PLAYERS] = {};
+        if (playerIds.length > 0) this.piles[PILES.PLAYERS] = {};
 
-        for (const player of players) {
-            this.piles[PILES.PLAYERS][player.id] = {
+        for (const playerId of playerIds) {
+            this.piles[PILES.PLAYERS][playerId] = {
                 [PILES.PLAYER]: [],
                 [PILES.DISCARD]: [],
             };
         }
-
     }
 
     discard(card, playerId = null) {
@@ -110,8 +114,34 @@ class PositionalBoard extends Board {
         return flip ? cc.card.toJson() : null;
     }
 
+    playerIds() {
+        return Boolean(this.piles[PILES.PLAYERS]) ? Object.keys(this.piles[PILES.PLAYERS]) : [];
+    }
+
     cleanUp() {
-        return [];
+        let cards = [];
+        const piles = { ...this.pilesToJson() };
+
+        for (const id of this.cards) {
+            cards.push(this.board.get(id).card);
+        }
+
+        cards = [...cards, ...this.piles[PILES.COMMON_DISCARD]];
+
+        for (const playerId of this.playerIds()) {
+            cards = [...cards, piles[PILES.PLAYERS][playerId][PILES.PLAYER]];
+            cards = [...cards, piles[PILES.PLAYERS][playerId][PILES.DISCARD]];
+        }
+
+        this.setup(this.playerIds());
+
+
+        return {
+            // maybe this can also return piles stats?
+            // will be usefull to calculate score
+            piles,
+            cards
+        };
     }
 
     pilesToJson() {
@@ -119,7 +149,7 @@ class PositionalBoard extends Board {
 
         if (Boolean(this.piles[PILES.PLAYERS])) {
             piles[PILES.PLAYERS] = {};
-            for (const playerId of Object.keys(this.piles[PILES.PLAYERS])) {
+            for (const playerId of this.playerIds()) {
                 piles[PILES.PLAYERS][playerId] = {
                     [PILES.PLAYER]: this.piles[PILES.PLAYERS][playerId][PILES.PLAYER].map(c => c.toJson()),
                     [PILES.DISCARD]: this.piles[PILES.PLAYERS][playerId][PILES.DISCARD].map(c => c.toJson()),

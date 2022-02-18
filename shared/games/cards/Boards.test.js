@@ -282,7 +282,9 @@ describe('Board specs', () => {
             card = hand.get('a_2');
             b.addToPlayerPile(SOME_PLAYER_ID, card);
 
-            expect(b.toJson()).toEqual({
+            const finalBoardState = { ...b.toJson() };
+
+            expect(finalBoardState).toEqual({
                 cards: [{
                     facing: 'up',
                     position: [0, 0],
@@ -325,9 +327,12 @@ describe('Board specs', () => {
 
 
             // Return to deck here
-            // maybe I could return score??
-            const cardStack = b.cleanUp();
+            // piles used for score
+            const { piles, cards: cardStack } = b.cleanUp();
+
+            expect(piles).toEqual(finalBoardState.piles);
             expect(b.toJson()).toEqual(initialBoardState);
+
             const finalDeck = Deck.makeFromCardStack(cardStack);
             expect(finalDeck.toJson()).toEqual(initialDeckState);
         });
