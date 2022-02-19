@@ -15,6 +15,9 @@ const ROOM_ACTIONS = {
     GAME_ACTION: 'client:game_action',
     GAME_ACTIONS: {
         STATE_UPDATE: 'server:game_state_udpate',
+        // maybe wont need this as I am using the result to give back stuff
+        PRIVATE_STATE_UPDATE: 'server:game_private_state_udpate',
+        // result might only update private state
         RESULT: 'server:client:game_actions:result'
     },
 

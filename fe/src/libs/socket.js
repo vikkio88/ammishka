@@ -62,6 +62,11 @@ const socket = {
     async adminCommand(roomId, command, payload = {}) {
         this.emitAction(ROOM_ACTIONS.ADMIN_CMD, { roomId, command, payload });
     },
+
+    async gameAction(roomId, action, payload = {}) {
+        this.emitAction(ROOM_ACTIONS.GAME_ACTION, { roomId, action, payload });
+    },
+
     async testAction(payload = {}) {
         this.emitAction('test', payload);
     },

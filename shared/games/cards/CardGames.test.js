@@ -30,8 +30,9 @@ describe('SingleDeckCardGame specs', () => {
             isFinished: false,
             phase: expect.objectContaining({
                 current: 'draw_phase',
+                actionsInPhase: ['draw'],
             }),
-            availableActions: ['draw'],
+            availableActions: expect.arrayContaining(['draw']),
             turns: {
                 currentPhase: 'draw_phase',
                 currentTurn: [],
@@ -62,8 +63,9 @@ describe('SingleDeckCardGame specs', () => {
             isFinished: false,
             phase: expect.objectContaining({
                 current: 'draw_phase',
+                actionsInPhase: ['draw'],
             }),
-            availableActions: ['draw'],
+            availableActions: expect.arrayContaining(['draw']),
             turns: {
                 currentPhase: 'draw_phase',
                 currentTurn: [],
@@ -96,8 +98,9 @@ describe('SingleDeckCardGame specs', () => {
             isFinished: false,
             phase: expect.objectContaining({
                 current: 'draw_phase',
+                actionsInPhase: ['draw'],
             }),
-            availableActions: ['draw'],
+            availableActions: expect.arrayContaining(['draw']),
             turns: {
                 currentPhase: 'draw_phase',
                 currentTurn: [],
@@ -400,7 +403,7 @@ const checkGameServerAsserts = (gameServerMock, { notify = false, gameStateUpdat
         expect(gameServerMock.gameStateUpdate).not.toHaveBeenCalled();
     } else {
         expect(gameServerMock.gameStateUpdate).toHaveBeenCalledWith(expect.objectContaining({
-            ...gameStateUpdate
+            game: expect.objectContaining({ ...gameStateUpdate })
         }));
     }
 

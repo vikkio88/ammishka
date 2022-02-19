@@ -1,6 +1,7 @@
 
 const { ROOM_ACTIONS } = require('ammishka-shared/actions');
 const { EVENTS: e } = require('ammishka-shared/events');
+const Game = require('ammishka-shared/games/Game');
 const makeIoGameServer = require('../libs/GameIo');
 
 const RoomsManager = require('../libs/RoomsManager');
@@ -53,17 +54,18 @@ const makeActionHandler = (
 
             case ROOM_ACTIONS.GAME_ACTION: {
                 const playerId = id;
-                const { roomId, action, payload } = payload;
+                const { roomId, action, payload: actionPayload } = payload;
                 const result = roomManager.getRoomforPlayerId(roomId, id);
                 if (!result.success) {
                     socket.emit(e.MESSAGE, result);
                 }
                 const { room } = result;
                 const game = room.getGame();
+                /** @type Game */
                 game.setServer(makeIoGameServer({ server: io, socket, roomId }));
 
                 // this already broadcasts/emits
-                game.action(playerId, action, payload);
+                game.action(playerId, action, actionPayload);
                 return;
             }
 

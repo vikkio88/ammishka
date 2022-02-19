@@ -29,6 +29,7 @@ const ACTIONS_CONDITIONS = {
     [ACTIONS.DRAW]: ({ turns, playerId, hands }) => turns.order[0] === playerId,
     [ACTIONS.PLAY_CARD]: ({ turns, playerId, hands, payload: { cardId } }) => turns.order[0] === playerId && hands.has(playerId) && hands.get(playerId).has(cardId),
     [ACTIONS.LOOK_AT_OWN_HAND]: ({ hands, playerId }) => hands.has(playerId),
+    [ACTIONS.SHOW_HAND]: ({ hands, playerId }) => hands.has(playerId),
     [ACTIONS.END_PHASE]: ({ turns, playerId }) => turns.order[0] === playerId,
 };
 
@@ -233,7 +234,7 @@ class SingleDeckCardGame extends Game {
 
         // here might want to broadcast new game state
         this.getServer().notify({ playerId, message: `${ACTIONS_LABELS[type]}` });
-        this.getServer().gameStateUpdate(this.toJson());
+        this.getServer().gameStateUpdate({ game: this.toJson() });
         this.getServer().reportResult(result);
         return result;
     }
@@ -307,7 +308,7 @@ class SingleDeckCardGame extends Game {
             players: this.players,
             nonPlayers: this.nonPlayers,
             phase: this.phases.toJson(),
-            availableActions: this.phases.getActionsInCurrent(),
+            availableActions: [...this.phases.getActionsInCurrent(), ...this.config.indipendentActions],
             deck: this.deck.toJson(),
             turns: this.turnsToJson(),
             hasStarted: this.hasStarted,

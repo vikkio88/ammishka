@@ -4,6 +4,7 @@ const { ROOM_ACTIONS } = require('ammishka-shared/actions');
 
 class IoClient extends Client {
     constructor(socket) {
+        super();
         this.socket = socket;
     }
 
@@ -15,16 +16,16 @@ class IoClient extends Client {
 
 class IoRoom extends Room {
     constructor(io, roomId) {
+        super();
         this.room = io.to(roomId);
     }
 
     broadcast(payload) {
-        this.socket.emit(e.MESSAGE, { payload: { type: ROOM_ACTIONS.GAME_STATE_UPDATE, ...payload } });
+        this.room.emit(e.MESSAGE, { success: true, payload: { type: ROOM_ACTIONS.GAME_ACTIONS.STATE_UPDATE, ...payload } });
     }
 
     notify(payload) {
-        console.log('server:notifying', payload);
-        this.socket.emit(e.NOTIFICATION, { message: payload });
+        this.room.emit(e.NOTIFICATION, { message: payload });
     }
 }
 

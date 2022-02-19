@@ -76,7 +76,7 @@ class Room {
     }
 
     hasPlayer(playerId) {
-        return this.userMap.has(playerId);
+        return this.users.has(playerId);
     }
 
     join(

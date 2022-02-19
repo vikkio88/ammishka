@@ -1,9 +1,15 @@
+import { useState } from 'react';
 import { useStoreon } from 'storeon/react';
-import Test from './Test';
+import a from '../../../store/actions';
+
+import Test from './TestDnD';
 
 const Game = () => {
-    const { game: { room }, app: { id } } = useStoreon('game', 'app');
+    const { game: { room }, app: { id }, dispatch } = useStoreon('game', 'app');
     const isMyTurn = id === room.game.turns.order?.[0] || false;
+
+    const [action, setAction] = useState(room.game.availableActions?.[0] || 'Nothing');
+
     return (
         <>
             <h1>Base Sicilian Cards Game</h1>
@@ -12,7 +18,13 @@ const Game = () => {
                 Phase : {room.game.phase.current}
             </h3>
             <h3>Possible actions</h3>
-            {room.game.availableActions.map(a => <>{a}</>)}
+            {room.game.availableActions.map(a => <span key={a}>{a}</span>)}
+
+            <select onChange={e => setAction(e.target.value)}>
+                {room.game.availableActions.map(a => <option key={a} value={a}>{a}</option>)}
+            </select>
+
+            <button onClick={() => dispatch(a.GAME.ACTION, { action, payload: {} })}>{action}</button>
 
             <h3>Deck info</h3>
             {room.game.deck.cardsLeft} / {room.game.deck.size}

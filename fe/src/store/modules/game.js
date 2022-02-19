@@ -18,8 +18,9 @@ const game = store => {
         socket.testAction({ some: 'info' });
     });
 
-    store.on(a.GAME.ACTION, () => {
-        //socket.testAction();
+    store.on(a.GAME.ACTION, ({ game }, { action, payload = {} }) => {
+        const { id } = game.room;
+        socket.gameAction(id, action, payload);
     });
 
     store.on(a.GAME.ADMIN_CMD, ({ game }, { command, payload = {} }) => {
@@ -118,7 +119,7 @@ const game = store => {
                 room: {
                     ...game.room,
                     game: {
-                        ...payload
+                        ...payload.game
                     }
                 }
             }

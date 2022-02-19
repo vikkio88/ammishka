@@ -47,13 +47,22 @@ const makeEventHandler = store => ({
             }
 
             case ROOM_ACTIONS.GAME_ACTIONS.RESULT: {
+                // those are private results for the private state
                 //store.dispatch(a.GAME.RCV_ADMIN_CMD, payload);
                 console.log(`GAME ACTION RESULT`, payload);
+                //store.dispatch()
                 return;
             }
 
+            // room has game too
             case ROOM_ACTIONS.STATE_UPDATE: {
                 store.dispatch(a.GAME.STATE_UPDATE, payload);
+                return;
+            }
+
+            // this is different form the one on top as it is only the game
+            case ROOM_ACTIONS.GAME_ACTIONS.STATE_UPDATE: {
+                store.dispatch(a.GAME.GAME_STATE_UPDATE, payload);
                 return;
             }
 
@@ -72,7 +81,9 @@ const makeEventHandler = store => ({
     [EVENTS.NOTIFICATION]: msg => {
         console.log('NOTIFICATION RECEIVED', msg);
         // todo: check standard notification message
-        const { message } = msg;
+        let { message } = msg;
+        // we need to build it in case is not a plain string
+        if (typeof message !== String) message = JSON.stringify(message);
         store.dispatch(a.UI.NOTIFICATION.SHOW, { message });
     }
 });
