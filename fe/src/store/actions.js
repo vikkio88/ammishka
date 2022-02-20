@@ -22,6 +22,7 @@ const ACTIONS = {
         ADMIN_CMD: 'game:room:admin_cmd',
         RCV_ADMIN_CMD: 'game:room:rcv_admin_cmd',
 
+        SECRET_STATE_UPDATE: 'game:room:rcv_secret_state_update',
         STATE_UPDATE: 'game:room:rcv_state_update',
         GAME_STATE_UPDATE: 'game:room:rcv_game_state_update',
     },

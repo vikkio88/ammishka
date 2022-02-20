@@ -5,8 +5,9 @@ import a from '../actions';
 const INITIAL_APP_STATE = {
     game: {
         room: null,
-        // maybe this here to store secret pieces of state
-        secret: null,
+        // this piece of state stores your private info on the game
+        secret: {},
+        //
         admin: false
     },
 };
@@ -122,6 +123,15 @@ const game = store => {
                         ...payload.game
                     }
                 }
+            }
+        };
+    });
+
+    store.on(a.GAME.SECRET_STATE_UPDATE, ({ game }, payload) => {
+        return {
+            game: {
+                ...game,
+                secret: { ...game.secret, ...payload }
             }
         };
     });

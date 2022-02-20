@@ -48,9 +48,7 @@ const makeEventHandler = store => ({
 
             case ROOM_ACTIONS.GAME_ACTIONS.RESULT: {
                 // those are private results for the private state
-                //store.dispatch(a.GAME.RCV_ADMIN_CMD, payload);
-                console.log(`GAME ACTION RESULT`, payload);
-                //store.dispatch()
+                store.dispatch(a.GAME.SECRET_STATE_UPDATE, payload);
                 return;
             }
 

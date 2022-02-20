@@ -1,14 +1,17 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useStoreon } from 'storeon/react';
 import a from '../../../store/actions';
 
 import Test from './TestDnD';
 
 const Game = () => {
-    const { game: { room }, app: { id }, dispatch } = useStoreon('game', 'app');
+    const { game: { room, secret }, app: { id }, dispatch } = useStoreon('game', 'app');
     const isMyTurn = id === room.game.turns.order?.[0] || false;
 
-    const [action, setAction] = useState(room.game.availableActions?.[0] || 'Nothing');
+    const [action, setAction] = useState('');
+    useEffect(() => {
+        setAction(room.game.availableActions?.[0] || 'Nothing');
+    }, [room]);
 
     return (
         <>
@@ -28,6 +31,13 @@ const Game = () => {
 
             <h3>Deck info</h3>
             {room.game.deck.cardsLeft} / {room.game.deck.size}
+
+            <h2>Secret State</h2>
+            <pre>
+                {JSON.stringify(secret, null, 2)}
+            </pre>
+
+            <h2>Game State</h2>
             <pre>
                 {JSON.stringify(room.game, null, 2)}
             </pre>
