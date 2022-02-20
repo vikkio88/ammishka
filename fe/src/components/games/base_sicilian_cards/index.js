@@ -36,9 +36,12 @@ const Game = () => {
             {room.game.deck.cardsLeft} / {room.game.deck.size}
 
             <h3>Hand</h3>
-            <select onChange={e => setCard(e.target.value)} defaultValue={card}>
-                {Array.isArray(secret?.hand?.cards) && secret.hand.cards.map(a => <option key={a.id} value={a.id}>{`${a.value} ${a.seed}`}</option>)}
-            </select>
+            {Array.isArray(secret?.hand?.cards) && <h4>No cards yet</h4>}
+            {Array.isArray(secret?.hand?.cards) && (
+                <select onChange={e => setCard(e.target.value)} defaultValue={card}>
+                    {secret.hand.cards.map(c => <option key={c.id} value={c.id}>{`${c.value} ${c.seed}`}</option>)}
+                </select>
+            )}
 
             <h2>Secret State</h2>
             <pre>

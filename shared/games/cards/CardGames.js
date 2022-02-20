@@ -210,7 +210,7 @@ class SingleDeckCardGame extends Game {
                 `Can't perform this action`
             );
         }
-
+        
         let result = this.actionHandler(playerId, type, payload);
 
         this.turns.currentTurn.push([playerId, { type, payload }]);

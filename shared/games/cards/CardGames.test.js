@@ -410,6 +410,7 @@ describe('SingleDeckCardGame specs', () => {
         
         gameState = g.toJson();
         expect(gameState.turns.order).toEqual([PLAYER_TWO]);
+        expect(gameState.turns.currentPhase).toBe('draw_phase');
         checkGameServerAsserts(gameServerMock, {
             notify: { message: expect.stringContaining('Ended') },
             gameStateUpdate: { ...gameState },
