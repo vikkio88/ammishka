@@ -9,9 +9,12 @@ const Game = () => {
     const isMyTurn = id === room.game.turns.order?.[0] || false;
 
     const [action, setAction] = useState('');
+    const [card, setCard] = useState(null);
     useEffect(() => {
         setAction(room.game.availableActions?.[0] || 'Nothing');
-    }, [room]);
+        setCard(secret?.hand?.cards?.[0] || 'Nothing');
+    }, [room, secret]);
+
 
     return (
         <>
@@ -27,10 +30,15 @@ const Game = () => {
                 {room.game.availableActions.map(a => <option key={a} value={a}>{a}</option>)}
             </select>
 
-            <button onClick={() => dispatch(a.GAME.ACTION, { action, payload: {} })}>{action}</button>
+            <button onClick={() => dispatch(a.GAME.ACTION, { action, payload: { cardId: card?.id } })}>{action}</button>
 
             <h3>Deck info</h3>
             {room.game.deck.cardsLeft} / {room.game.deck.size}
+
+            <h3>Hand</h3>
+            <select onChange={e => setCard(e.target.value)} defaultValue={card}>
+                {Array.isArray(secret?.hand?.cards) && secret.hand.cards.map(a => <option key={a.id} value={a.id}>{`${a.value} ${a.seed}`}</option>)}
+            </select>
 
             <h2>Secret State</h2>
             <pre>

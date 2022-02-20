@@ -227,7 +227,7 @@ describe('SingleDeckCardGame specs', () => {
         expect(g.toJson().turns.currentPhase).toBe('play_phase');
         expect(g.toJson().phase).toEqual({
             current: 'play_phase',
-            actionsInPhase: ['play_card'],
+            actionsInPhase: ['play_card', 'end_turn'],
             all: [
                 'draw_phase',
                 'play_phase',
@@ -374,6 +374,69 @@ describe('SingleDeckCardGame specs', () => {
                 [PLAYER_TWO, { type: 'play_card', payload: { cardId: 'diamonds_12' } }],
             ]
         ]);
+
+        // add a second turn test where you test how to end phases and turn
+
+        // ending a turn
+        // now player 2 draws
+        result = g.action(PLAYER_ONE, CARD_GAME_ACTIONS.DRAW);
+        expect(result).toEqual({
+            success: true,
+            payload: {
+                hand: expect.objectContaining({
+                    ownerId: PLAYER_ONE,
+                    cards: expect.arrayContaining([
+                        expect.objectContaining({
+                            id: 'diamonds_11',
+                            seed: 'diamonds',
+                            value: 11,
+                        })
+                    ])
+                }),
+                drawnCard: expect.objectContaining({
+                    id: 'diamonds_11',
+                    seed: 'diamonds',
+                    value: 11,
+                })
+            }
+        });
+        gameState = g.toJson();
+        expect(gameState.turns.currentPhase).toBe('play_phase');
+        result = g.action(PLAYER_ONE, CARD_GAME_ACTIONS.END_TURN);
+        expect(result).toEqual({
+            success: true,
+            payload: {}
+        });
+        
+        gameState = g.toJson();
+        expect(gameState.turns.order).toEqual([PLAYER_TWO]);
+        checkGameServerAsserts(gameServerMock, {
+            notify: { message: expect.stringContaining('Ended') },
+            gameStateUpdate: { ...gameState },
+            reportResult: { success: true }
+        });
+
+        result = g.action(PLAYER_TWO, CARD_GAME_ACTIONS.DRAW);
+        expect(result).toEqual({
+            success: true,
+            payload: {
+                hand: expect.objectContaining({
+                    ownerId: PLAYER_TWO,
+                    cards: expect.arrayContaining([
+                        expect.objectContaining({
+                            id: 'diamonds_10',
+                            seed: 'diamonds',
+                            value: 10,
+                        })
+                    ])
+                }),
+                drawnCard: expect.objectContaining({
+                    id: 'diamonds_10',
+                    seed: 'diamonds',
+                    value: 10,
+                })
+            }
+        });
 
         g.stop();
         expect(g.isFinished).toBe(true);

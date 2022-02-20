@@ -13,7 +13,7 @@ const ACTIONS = {
     LOOK_AT_OWN_HAND: 'look_at_own_hand',
     SHOW_HAND: 'show_hand',
     END_PHASE: 'end_phase',
-    END_TURN: 'end_phase',
+    END_TURN: 'end_turn',
 };
 
 const ACTIONS_LABELS = {
@@ -31,11 +31,13 @@ const ACTIONS_CONDITIONS = {
     [ACTIONS.LOOK_AT_OWN_HAND]: ({ hands, playerId }) => hands.has(playerId),
     [ACTIONS.SHOW_HAND]: ({ hands, playerId }) => hands.has(playerId),
     [ACTIONS.END_PHASE]: ({ turns, playerId }) => turns.order[0] === playerId,
+    [ACTIONS.END_TURN]: ({ turns, playerId }) => turns.order[0] === playerId,
 };
 
 const ACTIONS_EFFECTS = {
     [ACTIONS.DRAW]: () => ({ endPhase: true }),
     [ACTIONS.PLAY_CARD]: () => ({ endPhase: true }),
+    [ACTIONS.END_TURN]: () => ({ endPhase: true }),
     default: () => ({}),
 };
 
@@ -46,7 +48,7 @@ const PHASES = {
 
 const PHASES_ACTIONS = {
     [PHASES.DRAW]: [ACTIONS.DRAW],
-    [PHASES.PLAY]: [ACTIONS.PLAY_CARD],
+    [PHASES.PLAY]: [ACTIONS.PLAY_CARD, ACTIONS.END_TURN],
 };
 
 const ACTIONS_CONFIG = {
@@ -213,11 +215,11 @@ class SingleDeckCardGame extends Game {
 
         this.turns.currentTurn.push([playerId, { type, payload }]);
 
-        const { endPhase = false } = (ACTIONS_EFFECTS[type] || ACTIONS_EFFECTS.default)();
-        let endTurn = false;
-        if (endPhase) {
+        const { endPhase = false, endTurn: forcedEndTurn = false } = (ac.effects[type] || ac.effects.default)();
+        let endTurn = forcedEndTurn;
+        if (endPhase || forcedEndTurn) {
             const endPhaseResult = this.phases.end();
-            endTurn = endPhaseResult.endTurn;
+            endTurn = forcedEndTurn || endPhaseResult.endTurn;
         }
         //if action happened successfully && endTurn
         if (endTurn) {
@@ -262,8 +264,12 @@ class SingleDeckCardGame extends Game {
                 result = this.play(playerId, payload);
                 break;
             }
+            case ACTIONS.END_TURN: {
+                result = a_r(true);
+                break;
+            }
             default: {
-                result = a_r(false, { reason: 'This should never happen' });
+                result = a_r(false, { reason: `This should never happen, action ${action} not implemented` });
                 break;
             }
         }
