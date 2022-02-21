@@ -42,7 +42,7 @@ describe('SingleDeckCardGame specs', () => {
                 log: [],
             },
             score: null,
-            board: null,
+            board: { ...g.board.toJson() },
         });
 
         g = new SingleDeckCardGame(deck, [PLAYERS[0]], { minPlayers: 1, maxPlayers: 1 });
@@ -75,7 +75,7 @@ describe('SingleDeckCardGame specs', () => {
                 log: [],
             },
             score: null,
-            board: null,
+            board: { ...g.board.toJson() },
         });
 
         g = new SingleDeckCardGame(deck, [PLAYERS[0], { id: PLAYER_TWO, type: 'something else' }], { minPlayers: 1, maxPlayers: 1 });
@@ -110,7 +110,7 @@ describe('SingleDeckCardGame specs', () => {
                 log: [],
             },
             score: null,
-            board: null,
+            board: { ...g.board.toJson() },
         });
     });
 
@@ -260,7 +260,7 @@ describe('SingleDeckCardGame specs', () => {
         });
 
         // playing card correctly
-        result = g.action(PLAYER_ONE, CARD_GAME_ACTIONS.PLAY_CARD, { cardId: 'diamonds_13' });
+        result = g.action(PLAYER_ONE, CARD_GAME_ACTIONS.PLAY_CARD, { cardId: 'diamonds_13', position: [1, 1], facing: 'up' });
         expect(result).toEqual({
             success: true,
             payload: {
@@ -275,6 +275,17 @@ describe('SingleDeckCardGame specs', () => {
                 })
             }
         });
+        expect(g.toJson().board).toEqual(expect.objectContaining({
+            cards: [expect.objectContaining({
+                position: [1, 1],
+                facing: 'up',
+                card: {
+                    id: 'diamonds_13',
+                    seed: 'diamonds',
+                    value: 13,
+                }
+            })]
+        }));
 
 
         // checking other turn now
@@ -285,7 +296,7 @@ describe('SingleDeckCardGame specs', () => {
         expect(gameState.turns.currentTurn).toEqual([
             [PLAYER_ONE, { type: 'draw', payload: {} }],
             [PLAYER_ONE, { type: 'look_at_own_hand', payload: {} }],
-            [PLAYER_ONE, { type: 'play_card', payload: { cardId: 'diamonds_13' } }],
+            [PLAYER_ONE, { type: 'play_card', payload: { cardId: 'diamonds_13', position: [1, 1], facing: 'up' } }],
         ]);
         checkGameServerAsserts(gameServerMock, {
             notify: { message: expect.stringContaining('Played') },
@@ -369,7 +380,7 @@ describe('SingleDeckCardGame specs', () => {
             [//first turn
                 [PLAYER_ONE, { type: 'draw', payload: {} }],
                 [PLAYER_ONE, { type: 'look_at_own_hand', payload: {} }],
-                [PLAYER_ONE, { type: 'play_card', payload: { cardId: 'diamonds_13' } }],
+                [PLAYER_ONE, { type: 'play_card', payload: { cardId: 'diamonds_13', position: [1, 1], facing: 'up' } }],
                 [PLAYER_TWO, { type: 'draw', payload: {} }],
                 [PLAYER_TWO, { type: 'play_card', payload: { cardId: 'diamonds_12' } }],
             ]
@@ -407,7 +418,7 @@ describe('SingleDeckCardGame specs', () => {
             success: true,
             payload: {}
         });
-        
+
         gameState = g.toJson();
         expect(gameState.turns.order).toEqual([PLAYER_TWO]);
         expect(gameState.turns.currentPhase).toBe('draw_phase');

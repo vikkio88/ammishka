@@ -6,10 +6,24 @@ const Deck = require('./Deck');
 const Hand = require('./Hand');
 const Phases = require('./Phases');
 
+const { PositionalBoard, SlotsBoard } = require('./Boards');
+
+const BOARD_TYPES = {
+    POSITIONAL: 'positional',
+    SLOTS: 'slots',
+};
+
+const makeBoard = (players = [], type = BOARD_TYPES.POSITIONAL) => {
+    // if is type positional
+    return new PositionalBoard(players);
+};
+
 
 const ACTIONS = {
     DRAW: 'draw',
     PLAY_CARD: 'play_card',
+    PICK_FROM_BOARD: 'pick_from_board',
+    FLIP_CARD: 'flip_card',
     LOOK_AT_OWN_HAND: 'look_at_own_hand',
     SHOW_HAND: 'show_hand',
     END_PHASE: 'end_phase',
@@ -19,6 +33,8 @@ const ACTIONS = {
 const ACTIONS_LABELS = {
     [ACTIONS.DRAW]: 'Drew a card',
     [ACTIONS.PLAY_CARD]: 'Played a card',
+    [ACTIONS.PICK_FROM_BOARD]: 'Picked a card',
+    [ACTIONS.FLIP_CARD]: 'Flipped a card',
     [ACTIONS.LOOK_AT_OWN_HAND]: 'Looked at his hand',
     [ACTIONS.SHOW_HAND]: 'Showed his hand',
     [ACTIONS.END_PHASE]: 'Finished the Phase',
@@ -28,6 +44,8 @@ const ACTIONS_LABELS = {
 const ACTIONS_CONDITIONS = {
     [ACTIONS.DRAW]: ({ turns, playerId, hands }) => turns.order[0] === playerId,
     [ACTIONS.PLAY_CARD]: ({ turns, playerId, hands, payload: { cardId } }) => turns.order[0] === playerId && hands.has(playerId) && hands.get(playerId).has(cardId),
+    [ACTIONS.PICK_FROM_BOARD]: ({ turns, playerId, hands, payload: { cardId } }) => true,
+    [ACTIONS.FLIP_CARD]: ({ turns, playerId, hands, payload: { cardId } }) => true,
     [ACTIONS.LOOK_AT_OWN_HAND]: ({ hands, playerId }) => hands.has(playerId),
     [ACTIONS.SHOW_HAND]: ({ hands, playerId }) => hands.has(playerId),
     [ACTIONS.END_PHASE]: ({ turns, playerId }) => turns.order[0] === playerId,
@@ -47,7 +65,7 @@ const PHASES = {
 };
 
 const PHASES_ACTIONS = {
-    [PHASES.DRAW]: [ACTIONS.DRAW],
+    [PHASES.DRAW]: [ACTIONS.DRAW, /*ACTIONS.PICK_FROM_BOARD */],
     [PHASES.PLAY]: [ACTIONS.PLAY_CARD, ACTIONS.END_TURN],
 };
 
@@ -65,7 +83,8 @@ const defaultConfig = {
     phasesActions: PHASES_ACTIONS,
     indipendentActions: [ACTIONS.LOOK_AT_OWN_HAND, ACTIONS.SHOW_HAND],
     initialSetup: ({ deck, players, hands, order }) => ({ deck, players, hands, order }),
-    actions: { ...ACTIONS_CONFIG }
+    actions: { ...ACTIONS_CONFIG },
+    boardType: BOARD_TYPES.POSITIONAL,
 };
 
 
@@ -122,7 +141,7 @@ class SingleDeckCardGame extends Game {
         this.isFinished = false;
         this.score = null;
 
-        this.board = null;
+        this.board = makeBoard([...this.players]);
     }
 
 
@@ -210,7 +229,7 @@ class SingleDeckCardGame extends Game {
                 `Can't perform this action`
             );
         }
-        
+
         let result = this.actionHandler(playerId, type, payload);
 
         this.turns.currentTurn.push([playerId, { type, payload }]);
@@ -287,6 +306,8 @@ class SingleDeckCardGame extends Game {
         const hand = this.hands.get(playerId);
         const card = hand.get(payload.cardId);
 
+        this.board.place(card, playerId, payload.position, payload.facing);
+
         return a_r(true, {
             playedCard: card.toJson(),
             hand: hand.toJson()
@@ -321,7 +342,7 @@ class SingleDeckCardGame extends Game {
             isFinished: this.isFinished,
             isReady: this.isReady(),
             score: this.score,
-            board: this.board,
+            board: this.board.toJson(),
         };
     }
 }
