@@ -16,42 +16,60 @@ const Game = () => {
     }, [room, secret]);
 
 
+    const { phase, availableActions, deck, board, ...remoteGameState } = room.game;
+
+    const hasCardsInHand = Array.isArray(secret?.hand?.cards) && secret?.hand?.cards.length > 0;
+
+
     return (
         <>
             <h1>Base Sicilian Cards Game</h1>
             <h2>{isMyTurn ? 'YOUR TURN' : 'NOT YOUR TURN'}</h2>
             <h3>
-                Phase : {room.game.phase.current}
+                Phase : {phase.current}
             </h3>
             <h3>Possible actions</h3>
-            {room.game.availableActions.map(a => <span key={a}>{a}</span>)}
+            {availableActions.map(a => <span key={a}>{a}</span>)}
 
             <select onChange={e => setAction(e.target.value)}>
-                {room.game.availableActions.map(a => <option key={a} value={a}>{a}</option>)}
+                {availableActions.map(a => <option key={a} value={a}>{a}</option>)}
             </select>
 
             <button onClick={() => dispatch(a.GAME.ACTION, { action, payload: { cardId: card?.id } })}>{action}</button>
 
             <h3>Deck info</h3>
-            {room.game.deck.cardsLeft} / {room.game.deck.size}
+            {deck.cardsLeft} / {deck.size}
 
             <h3>Hand</h3>
-            {Array.isArray(secret?.hand?.cards) && <h4>No cards yet</h4>}
-            {Array.isArray(secret?.hand?.cards) && (
+            {!hasCardsInHand && <h4>No cards in hand</h4>}
+            {hasCardsInHand && (
                 <select onChange={e => setCard(e.target.value)} defaultValue={card}>
                     {secret.hand.cards.map(c => <option key={c.id} value={c.id}>{`${c.value} ${c.seed}`}</option>)}
                 </select>
             )}
 
-            <h2>Secret State</h2>
-            <pre>
-                {JSON.stringify(secret, null, 2)}
-            </pre>
+            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', fontSize: '12px' }}>
+                <div>
+                    <h2>Secret State</h2>
+                    <pre>
+                        {JSON.stringify(secret, null, 2)}
+                    </pre>
+                </div>
 
-            <h2>Game State</h2>
-            <pre>
-                {JSON.stringify(room.game, null, 2)}
-            </pre>
+                <div>
+                    <h2>Board State</h2>
+                    <pre>
+                        {JSON.stringify(board, null, 2)}
+                    </pre>
+                </div>
+
+                <div>
+                    <h2>Game State</h2>
+                    <pre>
+                        {JSON.stringify(remoteGameState, null, 2)}
+                    </pre>
+                </div>
+            </div>
         </>
     );
 };
