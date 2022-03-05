@@ -28,6 +28,16 @@ div.Lobby-subWrapper {
     align-items: center;
 }
 
+@media only screen and (max-width: 460px) {
+    div.Lobby-subWrapper {
+        width: unset;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+    }
+}
+
+
 div.Lobby-subWrapper button {
     margin-top: 0;
 }
