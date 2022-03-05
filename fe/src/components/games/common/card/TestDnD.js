@@ -3,7 +3,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
 
 import { useStoreon } from 'storeon/react';
-import ACTIONS from '../../../store/actions';
+import ACTIONS from '../../../../store/actions';
 
 
 
