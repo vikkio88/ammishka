@@ -12,8 +12,8 @@ const Game = () => {
     return (
         <>
             <h1>Base Sicilian Cards Game</h1>
-            {amITheBoard && <Board board={room.game.board} dispatch={dispatch} />}
-            {!amITheBoard && <Player {...playerProps} />}
+            {amITheBoard && <Board board={room.game.board} />}
+            {!amITheBoard && <Player {...playerProps} dispatch={dispatch} />}
         </>
     );
 };
