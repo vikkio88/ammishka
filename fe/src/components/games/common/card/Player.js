@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import a from '../../../../store/actions';
+import GameInfo from './GameInfo';
+import a from 'store/actions';
 
 const Player = ({ id, room, secret, dispatch }) => {
     const { phase, availableActions, deck, ...remoteGameState } = room.game;
@@ -13,11 +14,7 @@ const Player = ({ id, room, secret, dispatch }) => {
     }, [room, secret]);
     return (
         <>
-            <h2>{isMyTurn ? 'YOUR TURN' : 'NOT YOUR TURN'}</h2>
-
-            <h3>
-                Phase : {phase.current}
-            </h3>
+            <GameInfo {...{ phase, deck, isMyTurn }} />
             {isMyTurn && (
                 <>
                     <h3>Possible actions</h3>
@@ -31,8 +28,6 @@ const Player = ({ id, room, secret, dispatch }) => {
                 </>)
             }
 
-            <h3>Deck info</h3>
-            {deck.cardsLeft} / {deck.size}
 
             <h3>Hand</h3>
             {!hasCardsInHand && <h4>No cards in hand</h4>}
