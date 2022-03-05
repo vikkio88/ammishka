@@ -22,10 +22,12 @@ const GameCreation = () => {
 const GameJoining = () => {
     const { dispatch } = useStoreon();
     const [roomId, setRoomId] = useState('');
+
+    const composeRoomId = value => setRoomId(value.replace(/ /g, '_').toLowerCase())
     return (
         <div className='Lobby-subWrapper'>
-            <input type="text" value={roomId} placeholder='Insert Room Id' onChange={e => setRoomId(e.target.value)} />
-            <button onClick={() => dispatch(a.APP.JOIN, { roomId })} disabled={!Boolean(roomId)}>Join</button>
+            <input type="text" value={roomId} placeholder='Insert Room Id' onChange={e => composeRoomId(e.target.value)} />
+            <button onClick={() => dispatch(a.APP.JOIN, { roomId: roomId.trim() })} disabled={!Boolean(roomId)}>Join</button>
         </div>
     );
 };
