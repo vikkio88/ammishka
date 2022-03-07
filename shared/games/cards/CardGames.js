@@ -249,7 +249,7 @@ class SingleDeckCardGame extends Game {
                 this.turns.turn += 1;
                 this.turns.log.push(this.turns.currentTurn);
                 this.turns.currentTurn = [];
-                this.turns.order = this.turns.baseOrder;
+                this.turns.order = [...this.turns.baseOrder];
             }
         }
 

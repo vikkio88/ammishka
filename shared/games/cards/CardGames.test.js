@@ -462,6 +462,49 @@ describe('SingleDeckCardGame specs', () => {
         });
     });
 
+    it('[REGRESSION] Game sharing order and removing old base order turn', () => {
+        const deck = Deck.makeFromConfig(CARDS.DECKS.CONFIG[CARDS.TYPES.FRENCH]);
+        const g = new SingleDeckCardGame(deck, [...PLAYERS, { id: 'theTable', type: USER_TYPES.BOARD }]);
+        // turning error loggin off
+        g.setLogging({ off: true });
+        const gameServerMock = {
+            gameStateUpdate: jest.fn(),
+            reportResult: jest.fn(),
+            notify: jest.fn()
+        };
+        g.setServer(gameServerMock);
+        g.start();
+
+
+        let result = g.action(PLAYER_ONE, CARD_GAME_ACTIONS.DRAW);
+        expect(result).toEqual(expect.objectContaining({ success: true }));
+        result = g.action(PLAYER_ONE, CARD_GAME_ACTIONS.END_TURN);
+        expect(result).toEqual(expect.objectContaining({ success: true }));
+        // player 2
+        result = g.action(PLAYER_TWO, CARD_GAME_ACTIONS.DRAW);
+        expect(result).toEqual(expect.objectContaining({ success: true }));
+        result = g.action(PLAYER_TWO, CARD_GAME_ACTIONS.END_TURN);
+        expect(result).toEqual(expect.objectContaining({ success: true }));
+
+        expect(g.toJson().turns.order).not.toEqual([]);
+        expect(g.toJson().turns.baseOrder).not.toEqual([]);
+
+        // turn 2
+        result = g.action(PLAYER_ONE, CARD_GAME_ACTIONS.DRAW);
+        expect(result).toEqual(expect.objectContaining({ success: true }));
+        result = g.action(PLAYER_ONE, CARD_GAME_ACTIONS.END_TURN);
+        expect(result).toEqual(expect.objectContaining({ success: true }));
+        // player 2
+        result = g.action(PLAYER_TWO, CARD_GAME_ACTIONS.DRAW);
+        expect(result).toEqual(expect.objectContaining({ success: true }));
+        result = g.action(PLAYER_TWO, CARD_GAME_ACTIONS.END_TURN);
+        expect(result).toEqual(expect.objectContaining({ success: true }));
+
+        expect(g.toJson().turns.order).not.toEqual([]);
+        expect(g.toJson().turns.baseOrder).not.toEqual([]);
+    });
+
+
 
 });
 
