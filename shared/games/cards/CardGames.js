@@ -65,7 +65,9 @@ const PHASES = {
 };
 
 const PHASES_ACTIONS = {
-    [PHASES.DRAW]: [ACTIONS.DRAW, /*ACTIONS.PICK_FROM_BOARD */],
+    [PHASES.DRAW]: [
+        ACTIONS.DRAW, /*ACTIONS.PICK_FROM_BOARD */
+    ],
     [PHASES.PLAY]: [ACTIONS.PLAY_CARD, ACTIONS.END_TURN],
 };
 
@@ -81,7 +83,8 @@ const defaultConfig = {
     minPlayers: 2, maxPlayers: 2,
     phases: [PHASES.DRAW, PHASES.PLAY],
     phasesActions: PHASES_ACTIONS,
-    indipendentActions: [ACTIONS.LOOK_AT_OWN_HAND, ACTIONS.SHOW_HAND],
+    
+    indipendentActions: [/*ACTIONS.LOOK_AT_OWN_HAND, ACTIONS.SHOW_HAND*/],
     initialSetup: ({ deck, players, hands, order }) => ({ deck, players, hands, order }),
     actions: { ...ACTIONS_CONFIG },
     boardType: BOARD_TYPES.POSITIONAL,

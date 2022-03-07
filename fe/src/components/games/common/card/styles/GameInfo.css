@@ -1,3 +1,8 @@
 .GameInfo-wrapper{
+    border: solid 1px black;
+    flex: 1;
     display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
 }
