@@ -30,14 +30,23 @@ const Player = ({ id, room, secret, dispatch }) => {
                 {isMyTurn && (
                     <>
                         {step === STEPS.ACTION_SELECT && <Actions {...{ availableActions, panelState, setPanelState }} />}
-                        {step === STEPS.CARD_SELECT && <Hand secret={secret} selectCard={selectCard} isMyTurn={isMyTurn} />}
-                        {step === STEPS.BOARD_SELECT && <button onClick={() => setPanelState({ ...panelState, step: STEPS.FINAL })}>FAKE Board Position Picker</button>}
-                        {step === STEPS.FINAL && <button onClick={() => dispatch(
-                            a.GAME.ACTION,
-                            { action, payload }
-                        )}>
-                            Confirm: {action} {selectedCard ? selectedCard.id : ''}
-                        </button>}
+                        {step === STEPS.CARD_SELECT && <Hand {...{ isMyTurn, secret, setPanelState, selectCard, panelState }} />}
+                        {step === STEPS.BOARD_SELECT && (
+                            <>
+                                <button className='accent small' onClick={() => setPanelState({ ...panelState, step: STEPS.CARD_SELECT })}>← Back</button>
+                                <button onClick={() => setPanelState({ ...panelState, selectedCard: null, step: STEPS.FINAL })}>FAKE Board Position Picker</button>
+                            </>
+                        )}
+                        {step === STEPS.FINAL && <>
+                            <button className='accent small' onClick={() => setPanelState({ ...panelState, selectedCard: null, step: STEPS.ACTION_SELECT })}>← Actions</button>
+                            <button className='accent small' onClick={() => setPanelState({ ...panelState, step: STEPS.BOARD_SELECT })}>← Back</button>
+                            <button onClick={() => dispatch(
+                                a.GAME.ACTION,
+                                { action, payload }
+                            )}>
+                                Confirm: {action} {selectedCard ? selectedCard.id : ''}
+                            </button>
+                        </>}
                     </>
                 )}
 
