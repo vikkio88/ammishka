@@ -6,9 +6,6 @@ const Game = () => {
     const { game: { room, secret }, app: { id }, dispatch } = useStoreon('game', 'app');
     const playerProps = { id, room, secret };
     const amITheBoard = (room.game.nonPlayers || []).filter(p => p.id === id && p.type === USER_TYPES.BOARD).length > 0;
-
-
-
     return (
         <>
             <h1>Base Sicilian Cards Game</h1>

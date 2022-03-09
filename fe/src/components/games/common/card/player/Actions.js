@@ -9,7 +9,7 @@ const nextStep = {
     [CARD_GAME_ACTIONS.END_TURN]: STEPS.FINAL,
 };
 
-const Actions = ({ availableActions, setPanelState, panelState }) => {
+const Actions = ({ availableActions, selectAction }) => {
     return (
         <div className='actionsButtons'>
             {availableActions.map(action => {
@@ -17,8 +17,9 @@ const Actions = ({ availableActions, setPanelState, panelState }) => {
                 return (
                     <button
                         key={action}
+                        className='huge'
                         onClick={
-                            () => setPanelState({ ...panelState, step, action })
+                            () => selectAction(action, step)
                         }
                     >
                         {action}

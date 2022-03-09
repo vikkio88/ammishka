@@ -83,6 +83,11 @@ button.x-small {
     font-size: 10px;
 }
 
+button.huge {
+    padding: 20px 35px;
+    font-size: 20px;
+}
+
 button:disabled {
     opacity: .7;
     background-color: #ddd;
