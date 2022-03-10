@@ -1,4 +1,5 @@
 import { ACTIONS_CONFIG } from 'ammishka-shared/games/cards/CardGames';
+import { AB } from '../../wrappers';
 import { STEPS } from './enums';
 import './styles/Actions.css';
 
@@ -11,7 +12,7 @@ const nextStep = {
 
 const Actions = ({ availableActions, selectAction }) => {
     return (
-        <div className='actionsButtons'>
+        <AB>
             {availableActions.map(action => {
                 const step = nextStep[action] || STEPS.FINAL;
                 return (
@@ -28,7 +29,7 @@ const Actions = ({ availableActions, selectAction }) => {
             }
             )}
 
-        </div>
+        </AB>
     );
 };
 

@@ -7,6 +7,7 @@ import GameInfo from './GameInfo';
 import Debug from './Debug';
 
 import './styles/Player.css';
+import { AB } from '../wrappers';
 
 const initialPanelState = { selectedCard: null, step: STEPS.ACTION_SELECT, action: null };
 
@@ -36,15 +37,15 @@ const Player = ({ id, room, secret, dispatch }) => {
                         {step === STEPS.BOARD_SELECT && (
                             <>
                                 <button className='accent small' onClick={() => setPanelState({ ...panelState, step: STEPS.CARD_SELECT })}>← Back</button>
-                                <div className='actionsButtons'>
+                                <AB>
                                     <button onClick={() => setPanelState({ ...panelState, step: STEPS.FINAL })}>FAKE Board Position Picker</button>
-                                </div>
+                                </AB>
                             </>
                         )}
                         {step === STEPS.FINAL && <>
                             <button className='accent small' onClick={() => setPanelState({ ...panelState, selectedCard: null, step: STEPS.ACTION_SELECT })}>← Actions</button>
                             {Boolean(selectedCard) && <button className='accent small' onClick={() => setPanelState({ ...panelState, step: STEPS.BOARD_SELECT })}>← Back</button>}
-                            <div className='actionsButtons'>
+                            <AB>
                                 <button
                                     className='huge'
                                     onClick={() => dispatch(
@@ -53,7 +54,7 @@ const Player = ({ id, room, secret, dispatch }) => {
                                     )}>
                                     Confirm: {action} {selectedCard ? selectedCard.id : ''}
                                 </button>
-                            </div>
+                            </AB>
                         </>}
                     </>
                 )}

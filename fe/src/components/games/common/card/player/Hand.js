@@ -1,3 +1,4 @@
+import { AB } from '../../wrappers';
 import { STEPS } from './enums';
 import './styles/Hand.css';
 
@@ -8,7 +9,7 @@ const Hand = ({ secret, isMyTurn, selectCard }) => {
             {isMyTurn && <button className='accent small' onClick={() => selectCard(null, STEPS.ACTION_SELECT)}>← Back</button>}
             <h3>Hand</h3>
             {!hasCardsInHand && <h4>Your Hand is empty</h4>}
-            <div className='actionsButtons'>
+            <AB>
                 {
                     hasCardsInHand && (
                         secret.hand.cards.map(c => (
@@ -21,7 +22,7 @@ const Hand = ({ secret, isMyTurn, selectCard }) => {
                             </button>
                         )))
                 }
-            </div>
+            </AB>
         </>
     );
 };
